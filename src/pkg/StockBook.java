@@ -1,10 +1,7 @@
 package pkg;
 
-import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.io.FileInputStream;
 import java.sql.*;
-import java.util.Properties;
 import java.util.Vector;
 
 //cmd here:C:\Windows\System32\cmd.exe
@@ -13,8 +10,6 @@ public class StockBook {
     private static Statement stmt;
 
     public static void main(String[] args) {
-
-        StockBookUI UI = new StockBookUI();
         System.out.println("Start");
         try {
             conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/stockbook_db?serverTimezone=UTC", "root", "password");
@@ -41,11 +36,8 @@ public class StockBook {
                 tableModel.addRow(v);
             }
             System.out.println(rsmd.getColumnCount());
-            UI.table1.setModel(tableModel);
-           // UI.table1=new JTable(data,columnNames);
-//            JScrollPane scrollPane=new JScrollPane(UI.table1);
-//            UI.frame.add(scrollPane);
-//            UI.frame.validate();
+
+            GUI gui=new GUI(tableModel);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(e);
