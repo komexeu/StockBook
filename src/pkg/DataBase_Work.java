@@ -1,6 +1,7 @@
 package pkg;
 
 import javax.naming.Name;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import java.util.Vector;
@@ -27,7 +28,11 @@ public class DataBase_Work {
     void Search(String order) {
         try {
             //"SELECT * FROM stock_db"
-            String complax_order = "SELECT * FROM stock_db WHERE ID =" + order + ";";
+            String complax_order="";
+            if (order.equals("0000"))
+                complax_order = "SELECT * FROM stock_db;";
+            else
+                complax_order = "SELECT * FROM stock_db WHERE ID =" + order + ";";
             System.out.println(complax_order);
             ResultSet rs = stmt.executeQuery(complax_order);
             ResultSetMetaData rsmd = rs.getMetaData();
@@ -58,7 +63,7 @@ public class DataBase_Work {
         try {
             //"INSERT INTO stock_db(ID,NAME,BUY,SELL) VALUES();"
             String complax_order = "INSERT INTO stock_db(ID,NAME,BUY,SELL) VALUES(\""
-                     + ID + "\",\"" + NAME + "\",\"" + BUY + "\",\"" + SELL + "\");";
+                    + ID + "\",\"" + NAME + "\",\"" + BUY + "\",\"" + SELL + "\");";
             System.out.println(complax_order);
             stmt.executeUpdate(complax_order);
 
