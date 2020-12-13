@@ -4,11 +4,13 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.plaf.ColorUIResource;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.BoxLayout;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.RoundRectangle2D;
 
 public class GUI {
     JFrame _frame = new JFrame("First GUI");
@@ -65,12 +67,13 @@ public class GUI {
         JPanel mid_top_panel = new JPanel();
         mid_top_panel.setLayout(new GridLayout());
 
-        GUI_TOP_Message one = new GUI_TOP_Message("投資金額", new Color(200, 200, 255));
-        GUI_TOP_Message two = new GUI_TOP_Message("投資損益", new Color(180, 180, 230));
-        GUI_TOP_Message three = new GUI_TOP_Message("今日台股", new Color(150, 150, 200));
-        mid_top_panel.add(one.label);
-        mid_top_panel.add(two.label);
-        mid_top_panel.add(three.label);
+        RoundPanel one = new RoundPanel("投資金額", new Color(200, 200, 255));
+        RoundPanel two = new RoundPanel("投資損益", new Color(180, 180, 230));
+        RoundPanel three = new RoundPanel("今日台股", new Color(150, 150, 200));
+        mid_top_panel.add(one);
+        mid_top_panel.add(two);
+        mid_top_panel.add(three);
+
         _mid_panel.add(mid_top_panel, BorderLayout.NORTH);
         _mid_panel.add(_scrollPane, BorderLayout.CENTER);
 
@@ -132,48 +135,34 @@ public class GUI {
     }
 }
 
-class GUI_TOP_Message {
-    public JLabel label;
-
-    GUI_TOP_Message(String txt, Color c) {
-        JPanel p = new JPanel();
-        p.setLayout(new BorderLayout());
-
-        label = new JLabel(txt);
-        label.setOpaque(true);
-        label.setFont(new Font("Dialog", Font.BOLD, 40));
-        label.setPreferredSize(new Dimension(100, 80));
-        label.setBackground(new Color(c.getRed(), c.getGreen(), c.getBlue()));
-        //label.setBorder(new RoundBorder(new Color(c.getRed(), c.getGreen(), c.getBlue())));
-        p.add(label, BorderLayout.CENTER);
-    }
-}
+//p.setBorder(new RoundBorder(new Color(c.getRed(), c.getGreen(), c.getBlue())));
 //p.setBorder(new CompoundBorder(BorderFactory.createMatteBorder(5, 5, 5, 5, Color.WHITE),
 //        BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-class RoundBorder implements Border {
+class RoundPanel extends JPanel {
     private Color color;
 
-    public RoundBorder(Color color) {
-        this.color = color;
-    }
-
-    public RoundBorder() {
-        this.color = Color.BLACK;
-    }
-
-    public Insets getBorderInsets(Component c) {
-        return new Insets(0, 0, 0, 0);
-    }
-
-    public boolean isBorderOpaque() {
-        return true;
+    RoundPanel(String txt, Color c) {
+        super();
+        setOpaque(true);
+        setSize(80, 30);
+        setBackground(c);
+        JLabel label = new JLabel(txt, JLabel.CENTER);
+        label.setForeground(Color.white);
+        label.setPreferredSize(new Dimension(100, 60));
+        label.setFont(new Font("Dialog", Font.BOLD, 20));
+        label.setBounds(0, 0, 80, 30);
+        label.setAlignmentY(0.1f);
+        add(label);
     }
 
     @Override
-    public void paintBorder(Component c, Graphics g, int x, int y, int width,
-                            int height) {
-        g.setColor(color);
-       // g.drawRoundRect(0, 0, c.getWidth() - 5, c.getHeight() - 5, 15, 15);
-        g.fillRoundRect(3, 2, c.getWidth() - 5, c.getHeight() - 5, 15, 15);
+    public void paint(Graphics g) {
+        int fieldX = 0;
+        int fieldY = 0;
+        int fieldWeight = getSize().width;
+        int fieldHeight = getSize().height;
+        RoundRectangle2D rect = new RoundRectangle2D.Double(fieldX+3, fieldY+3, fieldWeight-6, fieldHeight-6, 20, 20);
+        g.setClip(rect);
+        super.paint(g);
     }
 }
