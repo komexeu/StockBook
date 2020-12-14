@@ -1,7 +1,5 @@
 package pkg;
 
-import javax.naming.Name;
-import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import java.util.Vector;
@@ -17,7 +15,9 @@ public class DataBase_Work {
 
     void ConnectDataBase() {
         try {
-            conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/stockbook_db?serverTimezone=UTC", "root", "password");
+            conn = DriverManager.getConnection(
+                    "jdbc:mysql://127.0.0.1:3306/stockbook_db?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8",
+                    "root", "password");
             stmt = conn.createStatement();
         } catch (Exception e) {
             e.printStackTrace();
@@ -28,8 +28,8 @@ public class DataBase_Work {
     void Search(String order) {
         try {
             //"SELECT * FROM stock_db"
-            String complax_order="";
-            if (order.equals("0000"))
+            String complax_order = "";
+            if (order.length() == 0)
                 complax_order = "SELECT * FROM stock_db;";
             else
                 complax_order = "SELECT * FROM stock_db WHERE ID =" + order + ";";
