@@ -39,7 +39,6 @@ public class GUI {
     RoundPanel three;
     //----------------------
     DataBase_Work db_work = new DataBase_Work();
-    Calculate cal=new Calculate();
 
     GUI() {
         _frame.setSize(1000, 500);
@@ -73,11 +72,11 @@ public class GUI {
         one.InitData("$ --.--");
 
         two = new RoundPanel(new Color(180, 180, 230));
-        two.InitTitle("投資損益");
+        two.InitTitle("已實現損益");
         two.InitData("$ --.--");
 
         three = new RoundPanel(new Color(150, 150, 200));
-        three.InitTitle("今日台股");
+        three.InitTitle("損益合計");
         three.InitData(" --.--");
         mid_top_panel.add(one);
         mid_top_panel.add(two);
@@ -119,9 +118,12 @@ public class GUI {
 
                 db_work.Search(_text.getText());
                 UpdateTableModel(db_work.GetTableModel());
-                String price = "$ " + cal.SumOfStock(db_work.GetTableModel());
+                Calculate cal = new Calculate(db_work.GetTableModel());
+                String price = "$ " + cal.AddComma(cal.SumOfStock());
+
                 one.text.setText(price);
-                two.text.setText("$ "+cal.AddComma(123));
+                two.text.setText("$ " + cal.AddComma(cal.ExpensesOfStock()));
+                three.text.setText("$ " + cal.AddComma(cal.MINUS()));
             }
         });
 
@@ -141,7 +143,7 @@ public class GUI {
     }
 
     void UpdateTableModel(DefaultTableModel dtm) {
-         _dtm = dtm;
+        _dtm = dtm;
         _tb.setModel(_dtm);
     }
 }
