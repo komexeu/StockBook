@@ -7,9 +7,16 @@ import java.util.Stack;
 import java.util.Vector;
 
 public class Calculate {
-    String SumOfStock(DefaultTableModel dtm) {
+    int Sum = 0;
+    int expenses = 0;
+    DefaultTableModel dtm;
+
+    Calculate(DefaultTableModel defaultTableModel) {
+        dtm = defaultTableModel;
+    }
+
+    int SumOfStock() {
         try {
-            int Sum = 0;
             for (int i = 0; i < dtm.getRowCount(); ++i) {
                 if (!dtm.getValueAt(i, 2).toString().equals("")) {
                     Float tmp = Float.parseFloat(dtm.getValueAt(i, 2).toString());
@@ -17,24 +24,50 @@ public class Calculate {
                 }
             }
 
-            String result= AddComma(Sum);
-            return result;
+            String result = AddComma(Sum);
+            return Sum;
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(e);
-            return "-999999";
+            return -99999;
         }
     }
 
-    String AddComma(int s){
-        String CommaString="";
+    int ExpensesOfStock() {
+        try {
+            for (int i = 0; i < dtm.getRowCount(); ++i) {
+                if (!dtm.getValueAt(i, 3).toString().equals("")) {
+                    Float tmp = Float.parseFloat(dtm.getValueAt(i, 3).toString());
+                    expenses += Math.round(tmp * 1000);
+                }
+            }
+
+            return expenses;
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e);
+            return -99999;
+        }
+    }
+
+    int MINUS() {
+        return expenses - Sum;
+    }
+
+    String AddComma(int s) {
+        String CommaString = "";
 
         String string_sum = String.valueOf(s);
         int flag = string_sum.length() % 3;
         for (int i = 1; i <= string_sum.length(); ++i) {
             CommaString += string_sum.charAt(i - 1);
-            if (((i - flag) % 3 == 0) && i != string_sum.length())
-                CommaString += ",";
+            if (string_sum.charAt(0) == '-') {
+                if (((i - flag) % 3 == 0) && i != string_sum.length() && i != 1)
+                    CommaString += ",";
+            } else {
+                if (((i - flag) % 3 == 0) && i != string_sum.length())
+                    CommaString += ",";
+            }
         }
         System.out.println(CommaString);
 
