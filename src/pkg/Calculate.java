@@ -17,21 +17,27 @@ public class Calculate {
                 }
             }
 
-            String string_sum = String.valueOf(Sum);
-            System.out.println(string_sum);
-            String result = "";
-            int flag = string_sum.length() % 3;
-            for (int i = 1; i <= string_sum.length(); ++i) {
-                result += string_sum.charAt(i - 1);
-                if (i % (3 + flag) == 0 && i != 0 && i != string_sum.length())
-                    result += ",";
-            }
-            System.out.println(result);
+            String result= AddComma(Sum);
             return result;
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(e);
             return "-999999";
         }
+    }
+
+    String AddComma(int s){
+        String CommaString="";
+
+        String string_sum = String.valueOf(s);
+        int flag = string_sum.length() % 3;
+        for (int i = 1; i <= string_sum.length(); ++i) {
+            CommaString += string_sum.charAt(i - 1);
+            if (((i - flag) % 3 == 0) && i != string_sum.length())
+                CommaString += ",";
+        }
+        System.out.println(CommaString);
+
+        return CommaString;
     }
 }

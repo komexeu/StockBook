@@ -39,6 +39,7 @@ public class GUI {
     RoundPanel three;
     //----------------------
     DataBase_Work db_work = new DataBase_Work();
+    Calculate cal=new Calculate();
 
     GUI() {
         _frame.setSize(1000, 500);
@@ -48,7 +49,7 @@ public class GUI {
         _NAME_label.setText("名稱:");
         _BUY_label.setText("買進:");
         _SELL_label.setText("賣出:");
-        _top_panel.setBackground(new Color(129, 199, 212));
+        _top_panel.setBackground(new Color(180, 180, 255));
         _top_panel.add(_ID_label);
         _top_panel.add(_ID_text);
         _top_panel.add(_NAME_label);
@@ -68,16 +69,16 @@ public class GUI {
         mid_top_panel.setLayout(new GridLayout());
 
         one = new RoundPanel(new Color(200, 200, 255));
-        one.SetTitle("投資金額");
-        one.SetData("$ 1,200,000");
+        one.InitTitle("投資金額");
+        one.InitData("$ --.--");
 
         two = new RoundPanel(new Color(180, 180, 230));
-        two.SetTitle("投資損益");
-        two.SetData("$ -20,000");
+        two.InitTitle("投資損益");
+        two.InitData("$ --.--");
 
         three = new RoundPanel(new Color(150, 150, 200));
-        three.SetTitle("今日台股");
-        three.SetData(" 14261.69 ");
+        three.InitTitle("今日台股");
+        three.InitData(" --.--");
         mid_top_panel.add(one);
         mid_top_panel.add(two);
         mid_top_panel.add(three);
@@ -118,9 +119,9 @@ public class GUI {
 
                 db_work.Search(_text.getText());
                 UpdateTableModel(db_work.GetTableModel());
-                Calculate cal = new Calculate();
-                String price = cal.SumOfStock(db_work.GetTableModel());
-                one.SetData(price);
+                String price = "$ " + cal.SumOfStock(db_work.GetTableModel());
+                one.text.setText(price);
+                two.text.setText("$ "+cal.AddComma(123));
             }
         });
 
@@ -140,7 +141,7 @@ public class GUI {
     }
 
     void UpdateTableModel(DefaultTableModel dtm) {
-        _dtm = dtm;
+         _dtm = dtm;
         _tb.setModel(_dtm);
     }
 }
@@ -150,23 +151,25 @@ public class GUI {
 //        BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 class RoundPanel extends JPanel {
     private Color color;
-    JLabel title;
-    JLabel data;
+    //使用函式調用會出現TABLE疊加在後面BUG
+    public JLabel title;
+    public JLabel text;
 
     RoundPanel(Color c) {
         super();
+        color = c;
         setOpaque(true);
         setSize(80, 30);
         setBackground(c);
 
         title = new JLabel();
-        data = new JLabel();
+        text = new JLabel();
 
         add(title);
-        add(data);
+        add(text);
     }
 
-    void SetTitle(String txt) {
+    void InitTitle(String txt) {
         title.setText(txt);
         title.setForeground(Color.white);
         title.setPreferredSize(new Dimension(80, 60));
@@ -175,13 +178,13 @@ class RoundPanel extends JPanel {
         title.setAlignmentY(0.1f);
     }
 
-    void SetData(String txt) {
-        data.setText(txt);
-        data.setForeground(Color.white);
-        data.setPreferredSize(new Dimension(130, 40));
-        data.setFont(new Font("Dialog", Font.BOLD, 20));
-        data.setBounds(0, 0, 130, 30);
-        data.setAlignmentY(0.1f);
+    void InitData(String txt) {
+        text.setText(txt);
+        text.setForeground(Color.white);
+        text.setPreferredSize(new Dimension(130, 40));
+        text.setFont(new Font("Dialog", Font.BOLD, 20));
+        text.setBounds(0, 0, 130, 30);
+        text.setAlignmentY(0.1f);
     }
 
     @Override
