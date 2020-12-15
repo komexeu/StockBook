@@ -72,11 +72,11 @@ public class GUI {
         one.InitData("$ --.--");
 
         two = new RoundPanel(new Color(180, 180, 230));
-        two.InitTitle("已實現損益");
+        two.InitTitle("已收回金額");
         two.InitData("$ --.--");
 
         three = new RoundPanel(new Color(150, 150, 200));
-        three.InitTitle("損益合計");
+        three.InitTitle("已實現損益");
         three.InitData(" --.--");
         mid_top_panel.add(one);
         mid_top_panel.add(two);

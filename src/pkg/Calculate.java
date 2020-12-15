@@ -1,8 +1,6 @@
 package pkg;
 
 import javax.swing.table.DefaultTableModel;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.util.Stack;
 import java.util.Vector;
 
@@ -51,7 +49,34 @@ public class Calculate {
     }
 
     int MINUS() {
-        return expenses - Sum;
+        Stack<String> id = new Stack<>();
+        int sell = 0;
+        int buy = 0;
+        for (int i = 0; i < dtm.getRowCount(); ++i) {
+            if (!dtm.getValueAt(i, 3).toString().equals("")) {
+                Float tmp = Float.parseFloat(dtm.getValueAt(i, 3).toString());
+                sell += Math.round(tmp * 1000);
+                System.out.println("sell ->"+ sell);
+                id.add(dtm.getValueAt(i, 0).toString());
+            }
+        }
+
+        while (id.size()!=0) {
+            String _id = id.pop();
+            System.out.println("ID ->"+ _id);
+            for (int j = 0; j < dtm.getRowCount(); ++j) {
+                if (!dtm.getValueAt(j, 0).toString().equals(_id))
+                    continue;
+                if (!dtm.getValueAt(j, 2).toString().equals("")) {
+                    float tmp = Float.parseFloat(dtm.getValueAt(j, 2).toString());
+                    System.out.println("buy ->"+ tmp);
+                    buy += Math.round(tmp * 1000);
+                    break;
+                }
+            }
+        }
+
+        return sell - buy;
     }
 
     String AddComma(int s) {
@@ -69,7 +94,6 @@ public class Calculate {
                     CommaString += ",";
             }
         }
-        System.out.println(CommaString);
 
         return CommaString;
     }
