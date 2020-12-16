@@ -162,7 +162,7 @@ public class GUI {
         String price = "$ " + cal.AddComma(cal.SumOfStock());
         one.text.setText(price);
         two.text.setText("$ " + cal.AddComma(cal.ExpensesOfStock()));
-        three.text.setText("$ " + cal.AddComma(cal.Realize_profit_loss()));
+        three.text.setText("$ " + cal.AddComma(cal.RealizeProfitLoss()));
     }
 }
 

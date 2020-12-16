@@ -48,7 +48,7 @@ public class Calculate {
         }
     }
 
-    int Realize_profit_loss() {
+    int RealizeProfitLoss() {
         //所有買入價
         Stack<Integer> BUY = new Stack<>();
         //所有賣出價
