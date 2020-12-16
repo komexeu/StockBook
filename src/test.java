@@ -6,4 +6,5 @@ public class test {
     private JTable table2;
     private JButton button2;
     private JRadioButton radioButton1;
+    private JComboBox comboBox1;
 }

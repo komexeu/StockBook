@@ -59,11 +59,21 @@ public class DataBase_Work {
         }
     }
 
-    void Add_Data(String ID, String NAME, String BUY, String SELL) {
+    void Add_Data(String ID, String NAME, String Price, int mode) {
         try {
-            //"INSERT INTO stock_db(ID,NAME,BUY,SELL) VALUES();"
-            String complax_order = "INSERT INTO stock_db(ID,NAME,BUY,SELL) VALUES(\""
-                    + ID + "\",\"" + NAME + "\",\"" + BUY + "\",\"" + SELL + "\");";
+            //"INSERT INTO stock_db(ID,NAME,Price,SELL) VALUES();"
+            String complax_order="";
+            switch (mode) {
+                case 0:
+                    complax_order = "INSERT INTO stock_db(ID,NAME,BUY,SELL) VALUES(\""
+                            + ID + "\",\"" + NAME + "\",\"" + Price + "\",\"" + "" + "\");";
+                    break;
+                case 1:
+                    complax_order = "INSERT INTO stock_db(ID,NAME,BUY,SELL) VALUES(\""
+                            + ID + "\",\"" + NAME + "\",\"" + "" + "\",\"" + Price + "\");";
+                    break;
+            }
+
             System.out.println(complax_order);
             stmt.executeUpdate(complax_order);
 

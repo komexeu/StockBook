@@ -18,15 +18,14 @@ public class GUI {
     JTextField _text = new JTextField("", 4);
     roundButton _search_button = new roundButton("搜尋");
 
+    JComboBox _Jbox;
     JPanel _top_panel = new JPanel();
     JLabel _ID_label = new JLabel();
     JTextField _ID_text = new JTextField("", 4);
     JLabel _NAME_label = new JLabel();
     JTextField _NAME_text = new JTextField("", 12);
-    JLabel _BUY_label = new JLabel();
-    JTextField _BUY_text = new JTextField("", 7);
-    JLabel _SELL_label = new JLabel();
-    JTextField _SELL_text = new JTextField("", 7);
+    JLabel _Buy_Sell_label = new JLabel();
+    JTextField _Buy_Sell_text = new JTextField("", 7);
     roundButton _newData_button = new roundButton("新增資料");
 
     JPanel _mid_panel = new JPanel();
@@ -46,17 +45,17 @@ public class GUI {
 
         _ID_label.setText("ID:");
         _NAME_label.setText("名稱:");
-        _BUY_label.setText("買進:");
-        _SELL_label.setText("賣出:");
+        _Buy_Sell_label.setText("買進價:");
         _top_panel.setBackground(new Color(180, 180, 255));
+        String labels[] = { "買進", "賣出" };
+        _Jbox=new JComboBox(labels);
+        _top_panel.add(_Jbox);
         _top_panel.add(_ID_label);
         _top_panel.add(_ID_text);
         _top_panel.add(_NAME_label);
         _top_panel.add(_NAME_text);
-        _top_panel.add(_BUY_label);
-        _top_panel.add(_BUY_text);
-        _top_panel.add(_SELL_label);
-        _top_panel.add(_SELL_text);
+        _top_panel.add(_Buy_Sell_label);
+        _top_panel.add(_Buy_Sell_text);
         _newData_button.setBorderPainted(false);
         _newData_button.setBackground(new Color(200, 200, 255));
         _top_panel.add(_newData_button);
@@ -118,9 +117,9 @@ public class GUI {
 
                 db_work.Search(_text.getText());
                 UpdateTableModel(db_work.GetTableModel());
+
                 Calculate cal = new Calculate(db_work.GetTableModel());
                 String price = "$ " + cal.AddComma(cal.SumOfStock());
-
                 one.text.setText(price);
                 two.text.setText("$ " + cal.AddComma(cal.ExpensesOfStock()));
                 three.text.setText("$ " + cal.AddComma(cal.MINUS()));
@@ -136,8 +135,29 @@ public class GUI {
                     if (!Character.isDigit(_ID_text.getText().charAt(i)))
                         return;
 
-                db_work.Add_Data(_ID_text.getText(), _NAME_text.getText(), _BUY_text.getText(), _SELL_text.getText());
+                db_work.Add_Data(_ID_text.getText(), _NAME_text.getText(), _Buy_Sell_text.getText(),_Jbox.getSelectedIndex());
                 UpdateTableModel(db_work.GetTableModel());
+
+                Calculate cal = new Calculate(db_work.GetTableModel());
+                String price = "$ " + cal.AddComma(cal.SumOfStock());
+                one.text.setText(price);
+                two.text.setText("$ " + cal.AddComma(cal.ExpensesOfStock()));
+                three.text.setText("$ " + cal.AddComma(cal.MINUS()));
+            }
+        });
+
+        _Jbox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String mode=String.valueOf(_Jbox.getItemAt(_Jbox.getSelectedIndex())) ;
+                switch (mode){
+                    case "買進":
+                        _Buy_Sell_label.setText("買進價:");
+                        break;
+                    case "賣出":
+                        _Buy_Sell_label.setText("賣出價:");
+                        break;
+                }
             }
         });
     }
