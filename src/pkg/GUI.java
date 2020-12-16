@@ -20,16 +20,18 @@ public class GUI {
 
     JComboBox _Jbox;
     JPanel _top_panel = new JPanel();
-    JLabel _ID_label = new JLabel();
+    JLabel _ID_label = new JLabel("ID:");
     JTextField _ID_text = new JTextField("", 4);
-    JLabel _NAME_label = new JLabel();
+    JLabel _NAME_label = new JLabel("名稱:");
     JTextField _NAME_text = new JTextField("", 12);
-    JLabel _Buy_Sell_label = new JLabel();
-    JTextField _Buy_Sell_text = new JTextField("", 7);
+    JLabel _Buy_Sell_label = new JLabel("買進價:");
+    JTextField _Buy_Sell_text = new JTextField("", 5);
+    JLabel _Num_of_shares_label = new JLabel("交易股數:");
+    JTextField _Num_of_shares_text = new JTextField("", 5);
     roundButton _newData_button = new roundButton("新增資料");
 
     JPanel _mid_panel = new JPanel();
-    JTable _tb = new JTable();
+    JTable _table = new JTable();
     DefaultTableModel _dtm = new DefaultTableModel();
     JScrollPane _scrollPane;
 
@@ -43,9 +45,6 @@ public class GUI {
         _frame.setSize(1000, 500);
         _frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        _ID_label.setText("ID:");
-        _NAME_label.setText("名稱:");
-        _Buy_Sell_label.setText("買進價:");
         _top_panel.setBackground(new Color(180, 180, 255));
         String labels[] = { "買進", "賣出" };
         _Jbox=new JComboBox(labels);
@@ -56,12 +55,14 @@ public class GUI {
         _top_panel.add(_NAME_text);
         _top_panel.add(_Buy_Sell_label);
         _top_panel.add(_Buy_Sell_text);
+        _top_panel.add(_Num_of_shares_label);
+        _top_panel.add(_Num_of_shares_text);
         _newData_button.setBorderPainted(false);
         _newData_button.setBackground(new Color(200, 200, 255));
         _top_panel.add(_newData_button);
 
-        _tb.setModel(_dtm);
-        _scrollPane = new JScrollPane(_tb);
+        _table.setModel(_dtm);
+        _scrollPane = new JScrollPane(_table);
         _mid_panel.setLayout(new BorderLayout());
         JPanel mid_top_panel = new JPanel();
         mid_top_panel.setLayout(new GridLayout());
@@ -71,7 +72,7 @@ public class GUI {
         one.InitData("$ --.--");
 
         two = new RoundPanel(new Color(180, 180, 230));
-        two.InitTitle("已收回金額");
+        two.InitTitle("均價/持有股數");
         two.InitData("$ --.--");
 
         three = new RoundPanel(new Color(150, 150, 200));
@@ -124,13 +125,15 @@ public class GUI {
         _newData_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (_ID_text.getText().length() != 4)
+                if (_Num_of_shares_text.getText().equals(""))
                     return;
                 for (int i = 0; i < _ID_text.getText().length(); ++i)
                     if (!Character.isDigit(_ID_text.getText().charAt(i)))
                         return;
 
-                db_work.Add_Data(_ID_text.getText(), _NAME_text.getText(), _Buy_Sell_text.getText(),_Jbox.getSelectedIndex());
+                db_work.Add_Data(_ID_text.getText(), _NAME_text.getText(),
+                        _Buy_Sell_text.getText(), _Num_of_shares_text.getText(),
+                        _Jbox.getSelectedIndex());
                 UpdateTableModel(db_work.GetTableModel());
                 UpdateTopData();
             }
@@ -154,7 +157,7 @@ public class GUI {
 
     void UpdateTableModel(DefaultTableModel dtm) {
         _dtm = dtm;
-        _tb.setModel(_dtm);
+        _table.setModel(_dtm);
     }
 
     void UpdateTopData(){

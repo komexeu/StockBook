@@ -18,7 +18,7 @@ public class Calculate {
             for (int i = 0; i < dtm.getRowCount(); ++i) {
                 if (!dtm.getValueAt(i, 2).toString().equals("")) {
                     Float tmp = Float.parseFloat(dtm.getValueAt(i, 2).toString());
-                    Sum += Math.round(tmp * 1000);
+                    Sum += Math.round(tmp * Integer.parseInt(dtm.getValueAt(i, 4).toString()));
                 }
             }
 
@@ -36,7 +36,6 @@ public class Calculate {
             for (int i = 0; i < dtm.getRowCount(); ++i) {
                 if (!dtm.getValueAt(i, 3).toString().equals("")) {
                     Float tmp = Float.parseFloat(dtm.getValueAt(i, 3).toString());
-                    expenses += Math.round(tmp * 1000);
                 }
             }
 
@@ -58,7 +57,7 @@ public class Calculate {
         for (int i = 0; i < dtm.getRowCount(); ++i) {
             if (!dtm.getValueAt(i, 3).toString().equals("")) {
                 Float sell_price = Float.parseFloat(dtm.getValueAt(i, 3).toString());
-                SELL.push(Math.round(sell_price * 1000));
+                SELL.push(Math.round(sell_price * Integer.parseInt(dtm.getValueAt(i, 4).toString())));
                 //取得賣出ID
                 String sell_id = dtm.getValueAt(i, 0).toString();
                 //同ID只搜一次
@@ -71,8 +70,8 @@ public class Calculate {
                             continue;
                         Float tmp_buy_price = Float.parseFloat(dtm.getValueAt(j, 2).toString());
                         if (tmp_ID.equals(sell_id)) {
-                            BUY.push(Math.round(tmp_buy_price * 1000));
-                        }
+                            BUY.push(Math.round(tmp_buy_price * Integer.parseInt(dtm.getValueAt(j, 4).toString())));
+                            }
                     }
                 }
             }
@@ -80,8 +79,12 @@ public class Calculate {
 
         int result = 0;
         while (SELL.size() != 0) {
-            result += SELL.pop();
-            result -= BUY.pop();
+            int s = SELL.pop();
+            result += s;
+            System.out.println(s);
+            int b = BUY.pop();
+            result -= b;
+            System.out.println(b);
         }
 
         return result;
