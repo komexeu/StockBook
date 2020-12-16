@@ -48,35 +48,43 @@ public class Calculate {
         }
     }
 
-    int MINUS() {
-        Stack<String> ID = new Stack<>();
-        Stack<Integer> BUY=new Stack<>();
-        int sell = 0;
-        int buy = 0;
+    int Realize_profit_loss() {
+        //所有買入價
+        Stack<Integer> BUY = new Stack<>();
+        //所有賣出價
+        Stack<Integer> SELL = new Stack<>();
+        Stack<String> SELL_ID = new Stack<>();
 
-        //不重複選取
         for (int i = 0; i < dtm.getRowCount(); ++i) {
             if (!dtm.getValueAt(i, 3).toString().equals("")) {
-                Float tmp = Float.parseFloat(dtm.getValueAt(i, 3).toString());
-                sell += Math.round(tmp * 1000);
-                ID.add(dtm.getValueAt(i, 0).toString());
-            }
-        }
-
-        while (ID.size()!=0) {
-            String _id = ID.pop();
-            for (int j = 0; j < dtm.getRowCount(); ++j) {
-                if (!dtm.getValueAt(j, 0).toString().equals(_id))
-                    continue;
-                if (!dtm.getValueAt(j, 2).toString().equals("")) {
-                    float tmp = Float.parseFloat(dtm.getValueAt(j, 2).toString());
-                    buy += Math.round(tmp * 1000);
-                    break;
+                Float sell_price = Float.parseFloat(dtm.getValueAt(i, 3).toString());
+                SELL.push(Math.round(sell_price * 1000));
+                //取得賣出ID
+                String sell_id = dtm.getValueAt(i, 0).toString();
+                //同ID只搜一次
+                if (SELL_ID.search(sell_id) == -1) {
+                    SELL_ID.push(sell_id);
+                    //搜尋所有同ID買入紀錄
+                    for (int j = 0; j < dtm.getRowCount(); ++j) {
+                        String tmp_ID = dtm.getValueAt(j, 0).toString();
+                        if (dtm.getValueAt(j, 2).toString().equals(""))
+                            continue;
+                        Float tmp_buy_price = Float.parseFloat(dtm.getValueAt(j, 2).toString());
+                        if (tmp_ID.equals(sell_id)) {
+                            BUY.push(Math.round(tmp_buy_price * 1000));
+                        }
+                    }
                 }
             }
         }
 
-        return sell - buy;
+        int result = 0;
+        while (SELL.size() != 0) {
+            result += SELL.pop();
+            result -= BUY.pop();
+        }
+
+        return result;
     }
 
     String AddComma(int s) {

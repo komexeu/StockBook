@@ -117,12 +117,7 @@ public class GUI {
 
                 db_work.Search(_text.getText());
                 UpdateTableModel(db_work.GetTableModel());
-
-                Calculate cal = new Calculate(db_work.GetTableModel());
-                String price = "$ " + cal.AddComma(cal.SumOfStock());
-                one.text.setText(price);
-                two.text.setText("$ " + cal.AddComma(cal.ExpensesOfStock()));
-                three.text.setText("$ " + cal.AddComma(cal.MINUS()));
+                UpdateTopData();
             }
         });
 
@@ -137,12 +132,7 @@ public class GUI {
 
                 db_work.Add_Data(_ID_text.getText(), _NAME_text.getText(), _Buy_Sell_text.getText(),_Jbox.getSelectedIndex());
                 UpdateTableModel(db_work.GetTableModel());
-
-                Calculate cal = new Calculate(db_work.GetTableModel());
-                String price = "$ " + cal.AddComma(cal.SumOfStock());
-                one.text.setText(price);
-                two.text.setText("$ " + cal.AddComma(cal.ExpensesOfStock()));
-                three.text.setText("$ " + cal.AddComma(cal.MINUS()));
+                UpdateTopData();
             }
         });
 
@@ -165,6 +155,14 @@ public class GUI {
     void UpdateTableModel(DefaultTableModel dtm) {
         _dtm = dtm;
         _tb.setModel(_dtm);
+    }
+
+    void UpdateTopData(){
+        Calculate cal = new Calculate(db_work.GetTableModel());
+        String price = "$ " + cal.AddComma(cal.SumOfStock());
+        one.text.setText(price);
+        two.text.setText("$ " + cal.AddComma(cal.ExpensesOfStock()));
+        three.text.setText("$ " + cal.AddComma(cal.Realize_profit_loss()));
     }
 }
 
