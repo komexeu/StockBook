@@ -72,7 +72,7 @@ public class GUI {
         one.InitData("$ --.--");
 
         two = new RoundPanel(new Color(180, 180, 230));
-        two.InitTitle("均價/持有股數");
+        two.InitTitle("均價");
         two.InitData("$ --.--");
 
         three = new RoundPanel(new Color(150, 150, 200));
