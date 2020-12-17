@@ -64,14 +64,43 @@ public class Calculate {
     //損益
     //bug:利用剩餘股數做判斷
     float RealizeProfitLoss() {
-        float result = 0;
+        DataBase_Work db=new DataBase_Work();
+
+        //所有買入價
+        Stack<Float> BUY = new Stack<>();
+        //所有賣出價
+        Stack<Float> SELL = new Stack<>();
+        Stack<String> SELL_ID = new Stack<>();
+
         for (int i = 0; i < dtm.getRowCount(); ++i) {
-            int num_tmp = Integer.parseInt(dtm.getValueAt(i, 4).toString());
-            result = dtm.getValueAt(i, 2).equals("") ?
-                    result + Float.parseFloat(dtm.getValueAt(i, 3).toString()) * num_tmp :
-                    result - Float.parseFloat(dtm.getValueAt(i, 2).toString()) * num_tmp;
+            if (!dtm.getValueAt(i, 3).toString().equals("")) {
+                Float sell_price = Float.parseFloat(dtm.getValueAt(i, 3).toString());
+                SELL.push(sell_price * Float.parseFloat(dtm.getValueAt(i, 4).toString()));
+                //取得賣出ID
+                String sell_id = dtm.getValueAt(i, 0).toString();
+                //同ID只搜一次
+                if (SELL_ID.search(sell_id) == -1) {
+                    SELL_ID.push(sell_id);
+                    //搜尋所有同ID買入紀錄
+                    for (int j = 0; j < dtm.getRowCount(); ++j) {
+                        String tmp_ID = dtm.getValueAt(j, 0).toString();
+                        if (dtm.getValueAt(j, 2).toString().equals(""))
+                            continue;
+                        Float tmp_buy_price = Float.parseFloat(dtm.getValueAt(j, 2).toString());
+                        if (tmp_ID.equals(sell_id)) {
+                            //用買入價*賣出股數
+                            BUY.push(tmp_buy_price * Float.parseFloat(dtm.getValueAt(i, 4).toString()));
+                        }
+                    }
+                }
+            }
         }
 
+        int result = 0;
+        while (SELL.size() != 0) {
+            result += SELL.pop();
+            result -= BUY.pop();
+        }
         return result;
     }
 
