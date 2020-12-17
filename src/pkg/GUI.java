@@ -24,7 +24,7 @@ public class GUI {
     JComboBox _Jbox;
     JComboBox _JFieldNamebox;
     JPanel _top_panel = new JPanel();
-    JLabel _ID_label = new JLabel("ID:");
+    JLabel _ID_label = new JLabel("stock_ID:");
     JTextField _ID_text = new JTextField("", 4);
     JLabel _NAME_label = new JLabel("名稱:");
     JTextField _NAME_text = new JTextField("", 12);
@@ -88,7 +88,7 @@ public class GUI {
         _mid_panel.add(mid_top_panel, BorderLayout.NORTH);
         _mid_panel.add(_scrollPane, BorderLayout.CENTER);
 
-        String FieldName[] = {"ID v", "ID ^", "NAME v", "NAME ^",
+        String FieldName[] = {"ID v", "ID ^","stock_ID v", "stock_ID ^", "NAME v", "NAME ^",
                 "BUY v", "BUY ^", "SELL v", "SELL ^", "NumberOfShares v", "NumberOfShares ^"};
         _JFieldNamebox = new JComboBox(FieldName);
         _left_panel.add(_JFieldNamebox);
@@ -193,13 +193,13 @@ public class GUI {
         _table.setModel(_dtm);
     }
 
-    void UpdateTopData(String ID) {
+    void UpdateTopData(String stock_ID) {
         DataBase_Work db_work = new DataBase_Work();
         Calculate cal = new Calculate(db_work.GetTableModel());
         String price = "$ " + cal.AddComma(cal.SumOfStock(_search_text.getText()));
         first.text.setText(price);
         second.text.setText(cal.AddComma(cal.averageOfBuy(_search_text.getText())));
-        third.text.setText("$ " + cal.AddComma(cal.RealizeProfitLoss(ID)));
+        third.text.setText("$ " + cal.AddComma(cal.RealizeProfitLoss(stock_ID)));
     }
 }
 

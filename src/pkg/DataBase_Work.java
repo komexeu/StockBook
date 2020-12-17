@@ -48,7 +48,7 @@ public class DataBase_Work {
         if (order.length() == 0)
             complax_order = "SELECT * FROM stock_db;";
         else
-            complax_order = "SELECT * FROM stock_db WHERE ID =" + order + ";";
+            complax_order = "SELECT * FROM stock_db WHERE stock_ID =" + order + ";";
         return complax_order;
     }
 
@@ -58,7 +58,7 @@ public class DataBase_Work {
         if (order.length() == 0)
             complax_order = "SELECT * FROM stock_db ORDER BY " + Fieldname;
         else
-            complax_order = "SELECT * FROM stock_db WHERE ID =" + order + " ORDER BY " + Fieldname;
+            complax_order = "SELECT * FROM stock_db WHERE stock_ID =" + order + " ORDER BY " + Fieldname;
 
         if (up2down)
             complax_order += " DESC;";
@@ -69,17 +69,17 @@ public class DataBase_Work {
         return complax_order;
     }
 
-    String SQL_Insert(String ID, String NAME, String Price, String NumOfShares, int mode) {
-        //"INSERT INTO stock_db(ID,NAME,Price,SELL) VALUES();"
+    String SQL_Insert(String stock_ID, String NAME, String Price, String NumOfShares, int mode) {
+        //"INSERT INTO stock_db(stock_ID,NAME,Price,SELL) VALUES();"
         String complax_order = "";
         switch (mode) {
             case 0:
-                complax_order = "INSERT INTO stock_db(ID,NAME,BUY,SELL,NumberOfShares) VALUES(\""
-                        + ID + "\",\"" + NAME + "\",\"" + Price + "\",\"" + "0" + "\",";
+                complax_order = "INSERT INTO stock_db(stock_ID,stock_ID,NAME,BUY,SELL,NumberOfShares) VALUES(\""
+                        + stock_ID + "\",\"" + NAME + "\",\"" + Price + "\",\"" + "0" + "\",";
                 break;
             case 1:
-                complax_order = "INSERT INTO stock_db(ID,NAME,BUY,SELL,NumberOfShares) VALUES(\""
-                        + ID + "\",\"" + NAME + "\",\"" + "0" + "\",\"" + Price + "\",";
+                complax_order = "INSERT INTO stock_db(stock_ID,stock_ID,NAME,BUY,SELL,NumberOfShares) VALUES(\""
+                        + stock_ID + "\",\"" + NAME + "\",\"" + "0" + "\",\"" + Price + "\",";
                 break;
         }
         complax_order += (NumOfShares + ");");
@@ -115,15 +115,15 @@ public class DataBase_Work {
         }
     }
 
-    void Add_Data(String ID, String NAME, String Price, String NumOfShares, String Fieldname, int mode, boolean up2down) {
+    void Add_Data(String stock_ID, String NAME, String Price, String NumOfShares, String Fieldname, int mode, boolean up2down) {
         try {
             Fieldname=Fieldname.split(" ")[0];
-            String complax_order = SQL_Insert(ID, NAME, Price, NumOfShares, mode);
+            String complax_order = SQL_Insert(stock_ID, NAME, Price, NumOfShares, mode);
 
             System.out.println(complax_order);
             stmt.executeUpdate(complax_order);
 
-            Search(ID, Fieldname,up2down);
+            Search(stock_ID, Fieldname,up2down);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(e);

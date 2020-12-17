@@ -15,22 +15,22 @@ public class Calculate {
 
     //投資成本
     //每筆買入價+手續費
-    float SumOfStock(String ID) {
+    float SumOfStock(String stock_ID) {
         float Sum = 0;
         try {
             String complax_order = "";
-            if (ID.length() == 0)
+            if (stock_ID.length() == 0)
                 complax_order = "SELECT * FROM stock_db WHERE BUY !=0 ORDER BY BUY DESC";
             else
-                complax_order = "SELECT * FROM stock_db WHERE BUY !=0 && ID =" + ID + " ORDER BY BUY DESC;";
+                complax_order = "SELECT * FROM stock_db WHERE BUY !=0 && stock_ID =" + stock_ID + " ORDER BY BUY DESC;";
             DataBase_Work dtb = new DataBase_Work();
             ResultSet rs = dtb.SQL_Order(complax_order);
             ResultSetMetaData rsmd = rs.getMetaData();
 
             int j = 0;
             while (rs.next()) {
-                float tmp_buy = Float.parseFloat(rs.getString(3));
-                int tmp_num = Integer.parseInt(rs.getString(5));
+                float tmp_buy = Float.parseFloat(rs.getString(4));
+                int tmp_num = Integer.parseInt(rs.getString(6));
                 Sum += tmp_buy * tmp_num * 1.001425;
             }
         } catch (Exception e) {
@@ -48,23 +48,23 @@ public class Calculate {
 
     //買進均價(不含手續費)
     //投資成本(不含手續費)/持有股數
-    float averageOfBuy(String ID) {
+    float averageOfBuy(String stock_ID) {
         int sum_num = 0;
         float sum = 0;
         try {
             String complax_order = "";
-            if (ID.length() == 0)
+            if (stock_ID.length() == 0)
                 complax_order = "SELECT * FROM stock_db WHERE BUY !=0 ORDER BY BUY DESC";
             else
-                complax_order = "SELECT * FROM stock_db WHERE BUY !=0 && ID =" + ID + " ORDER BY BUY DESC;";
+                complax_order = "SELECT * FROM stock_db WHERE BUY !=0 && stock_ID =" + stock_ID + " ORDER BY BUY DESC;";
             DataBase_Work dtb = new DataBase_Work();
             ResultSet rs = dtb.SQL_Order(complax_order);
             ResultSetMetaData rsmd = rs.getMetaData();
 
 
             while (rs.next()) {
-                float tmp_num = Float.parseFloat(rs.getString(5));
-                float tmp_buy = Float.parseFloat(rs.getString(3));
+                float tmp_num = Float.parseFloat(rs.getString(6));
+                float tmp_buy = Float.parseFloat(rs.getString(4));
                 //買進股數
                 sum_num += tmp_num;
                 //投資成本(不含手續費)
@@ -72,7 +72,6 @@ public class Calculate {
                 //剩餘持有股數(有賣出資料)
                 //sum_num += Float.parseFloat(rs.getString(3)) == 0 ? -tmp_num : tmp_num;
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(e);
@@ -80,23 +79,22 @@ public class Calculate {
         return sum / sum_num;
     }
 
-    float averageOfBuy_HandlingFee(String ID) {
+    float averageOfBuy_HandlingFee(String stock_ID) {
         int sum_num = 0;
         float sum = 0;
         try {
             String complax_order = "";
-            if (ID.length() == 0)
+            if (stock_ID.length() == 0)
                 complax_order = "SELECT * FROM stock_db WHERE BUY !=0 ORDER BY BUY DESC";
             else
-                complax_order = "SELECT * FROM stock_db WHERE BUY !=0 && ID =" + ID + " ORDER BY BUY DESC;";
+                complax_order = "SELECT * FROM stock_db WHERE BUY !=0 && stock_ID =" + stock_ID + " ORDER BY BUY DESC;";
             DataBase_Work dtb = new DataBase_Work();
             ResultSet rs = dtb.SQL_Order(complax_order);
             ResultSetMetaData rsmd = rs.getMetaData();
 
-
             while (rs.next()) {
-                float tmp_num = Float.parseFloat(rs.getString(5));
-                float tmp_buy = Float.parseFloat(rs.getString(3));
+                float tmp_num = Float.parseFloat(rs.getString(6));
+                float tmp_buy = Float.parseFloat(rs.getString(4));
                 //買進股數
                 sum_num += tmp_num;
                 //投資成本(不含手續費)
@@ -111,24 +109,43 @@ public class Calculate {
     }
 
     //損益試算
-    float RealizeProfitLoss(String ID) {
+    float RealizeProfitLoss(String stock_ID) {
+        Stack BUY_Price = new Stack();
+        Stack SELL_Price = new Stack();
+        int sum_sell_num = 0;
+
         try {
-            String complax_order = "";
-            if (ID.length() == 0)
-                complax_order = "SELECT * FROM stock_db ORDER BY BUY DESC";
-            else
-                complax_order = "SELECT * FROM stock_db WHERE ID =" + ID + " ORDER BY BUY DESC;";
-            DataBase_Work dtb = new DataBase_Work();
-            ResultSet rs = dtb.SQL_Order(complax_order);
-            ResultSetMetaData rsmd = rs.getMetaData();
-
-
+//            String complax_order = "";
+//            if (stock_ID.length() == 0)
+//                complax_order = "SELECT * FROM stock_db ORDER BY SELL DESC";
+//            else
+//                complax_order = "SELECT * FROM stock_db WHERE stock_ID =" + stock_ID + " ORDER BY SELL DESC;";
+//            DataBase_Work dtb = new DataBase_Work();
+//            ResultSet rs = dtb.SQL_Order(complax_order);
+//            ResultSetMetaData rsmd = rs.getMetaData();
+//
+//            while (rs.next()) {
+//                float tmp_num = Float.parseFloat(rs.getString(6));
+//                float tmp_buy = Float.parseFloat(rs.getString(4));
+//                float tmp_sell = Float.parseFloat(rs.getString(5));
+//                if (tmp_buy == 0) {
+//                    sum_sell_num += tmp_num;
+//                    SELL_Price.push(tmp_sell);
+//                } else {
+//                    sum_sell_num -= tmp_num;
+//                    BUY_Price.push(tmp_buy);
+//                    if (sum_sell_num <= 0)
+//                        break;
+//                }
+//            }
+//
+//            //SumOfStock(stock_ID) +;
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(e);
         }
 
-        int result = 0;
+        float result = 0;
 
         return result;
     }
