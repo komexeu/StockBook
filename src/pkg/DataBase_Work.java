@@ -1,5 +1,7 @@
 package pkg;
 
+import com.mysql.cj.protocol.Resultset;
+
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import java.util.Vector;
@@ -8,6 +10,8 @@ public class DataBase_Work {
     private static Connection conn;
     private static Statement stmt;
     private static DefaultTableModel _tableModel;
+
+    private  ResultSet rs;
 
     DataBase_Work() {
         SQL_Connect();
@@ -24,7 +28,21 @@ public class DataBase_Work {
             System.out.println(e);
         }
     }
-    String SQL_Select_Where(String order){
+
+    //SQL結果
+    ResultSet SQL_Order(String SQL_order) {
+        try {
+            ResultSet rs = stmt.executeQuery(SQL_order);
+
+            return rs;
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e);
+            return rs;
+        }
+    }
+
+    String SQL_Select_Where(String order) {
         //"SELECT * FROM stock_db"
         String complax_order = "";
         if (order.length() == 0)
@@ -33,17 +51,19 @@ public class DataBase_Work {
             complax_order = "SELECT * FROM stock_db WHERE ID =" + order + ";";
         return complax_order;
     }
-    String SQL_Select_OrderBy(String order){
+
+    String SQL_Select_OrderBy(String order, String Fieldname) {
         String complax_order = "";
 
         if (order.length() == 0)
-            complax_order = "SELECT * FROM stock_db ORDER BY ID;";
+            complax_order = "SELECT * FROM stock_db ORDER BY " + Fieldname + ";";
         else
-            complax_order = "SELECT * FROM stock_db WHERE ID =" + order + " ORDER BY ID;";
+            complax_order = "SELECT * FROM stock_db WHERE ID =" + order + " ORDER BY " + Fieldname + ";";
 
         return complax_order;
     }
-    String SQL_Insert(String ID, String NAME, String Price, String NumOfShares, int mode){
+
+    String SQL_Insert(String ID, String NAME, String Price, String NumOfShares, int mode) {
         //"INSERT INTO stock_db(ID,NAME,Price,SELL) VALUES();"
         String complax_order = "";
         switch (mode) {
@@ -60,9 +80,9 @@ public class DataBase_Work {
         return complax_order;
     }
 
-    void Search(String order) {
+    void Search(String order, String Fieldname) {
         try {
-            String complax_order = SQL_Select_OrderBy(order);
+            String complax_order = SQL_Select_OrderBy(order, Fieldname);
             System.out.println(complax_order);
             ResultSet rs = stmt.executeQuery(complax_order);
             ResultSetMetaData rsmd = rs.getMetaData();
@@ -89,14 +109,14 @@ public class DataBase_Work {
         }
     }
 
-    void Add_Data(String ID, String NAME, String Price, String NumOfShares, int mode) {
+    void Add_Data(String ID, String NAME, String Price, String NumOfShares, String Fieldname, int mode) {
         try {
-            String complax_order = SQL_Insert(ID,NAME,Price,NumOfShares,mode);
+            String complax_order = SQL_Insert(ID, NAME, Price, NumOfShares, mode);
 
             System.out.println(complax_order);
             stmt.executeUpdate(complax_order);
 
-            Search(ID);
+            Search(ID, Fieldname);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(e);

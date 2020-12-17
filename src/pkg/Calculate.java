@@ -1,29 +1,41 @@
 package pkg;
 
 import javax.swing.table.DefaultTableModel;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.util.Stack;
 import java.util.Vector;
 
 public class Calculate {
-    int expenses = 0;
     DefaultTableModel dtm;
 
     Calculate(DefaultTableModel defaultTableModel) {
         dtm = defaultTableModel;
     }
 
-    //投資金額
-    float SumOfStock() {
+    //投資成本
+    //每筆買入價+手續費
+    float SumOfStock(String ID) {
         try {
+            String complax_order = "";
+            if (ID.length() == 0)
+                complax_order = "SELECT * FROM stock_db ORDER BY BUY DESC";
+            else
+                complax_order = "SELECT * FROM stock_db WHERE ID =" + ID + " ORDER BY BUY DESC;";
+            System.out.println("HERE-> " + complax_order);
+            DataBase_Work dtb = new DataBase_Work();
+            ResultSet rs = dtb.SQL_Order(complax_order);
+            ResultSetMetaData rsmd = rs.getMetaData();
+
+            int j = 0;
             float Sum = 0;
-            for (int i = 0; i < dtm.getRowCount(); ++i) {
-                if (!dtm.getValueAt(i, 2).toString().equals("")) {
-                    Float tmp = Float.parseFloat(dtm.getValueAt(i, 2).toString());
-                    Sum += tmp * Integer.parseInt(dtm.getValueAt(i, 4).toString());
-                }
+            while (rs.next()) {
+                float tmp_buy = Float.parseFloat(rs.getString(3));
+                int tmp_num = Integer.parseInt(rs.getString(5));
+                System.out.println(tmp_num);
+                Sum += tmp_buy * tmp_num * 1.001425;
             }
 
-            String result = AddComma(Sum);
             return Sum;
         } catch (Exception e) {
             e.printStackTrace();
@@ -34,23 +46,13 @@ public class Calculate {
 
     //回收金額
     int ExpensesOfStock() {
-        try {
-            for (int i = 0; i < dtm.getRowCount(); ++i) {
-                if (!dtm.getValueAt(i, 3).toString().equals("")) {
-                    Float tmp = Float.parseFloat(dtm.getValueAt(i, 3).toString());
-                }
-            }
-
-            return expenses;
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println(e);
-            return -99999;
-        }
+        int ex = 0;
+        return ex;
     }
 
-    //剩餘股數
-    int NumOfShares() {
+    //買進均價
+    //投資成本/持有股數
+    int averageOfBuy() {
         int n = 0;
 
         for (int i = 0; i < dtm.getRowCount(); ++i) {
@@ -61,49 +63,16 @@ public class Calculate {
         return n;
     }
 
-    //損益
-    //bug:利用剩餘股數做判斷
-    float RealizeProfitLoss() {
-        DataBase_Work db=new DataBase_Work();
-
-        //所有買入價
-        Stack<Float> BUY = new Stack<>();
-        //所有賣出價
-        Stack<Float> SELL = new Stack<>();
-        Stack<String> SELL_ID = new Stack<>();
-
-        for (int i = 0; i < dtm.getRowCount(); ++i) {
-            if (!dtm.getValueAt(i, 3).toString().equals("")) {
-                Float sell_price = Float.parseFloat(dtm.getValueAt(i, 3).toString());
-                SELL.push(sell_price * Float.parseFloat(dtm.getValueAt(i, 4).toString()));
-                //取得賣出ID
-                String sell_id = dtm.getValueAt(i, 0).toString();
-                //同ID只搜一次
-                if (SELL_ID.search(sell_id) == -1) {
-                    SELL_ID.push(sell_id);
-                    //搜尋所有同ID買入紀錄
-                    for (int j = 0; j < dtm.getRowCount(); ++j) {
-                        String tmp_ID = dtm.getValueAt(j, 0).toString();
-                        if (dtm.getValueAt(j, 2).toString().equals(""))
-                            continue;
-                        Float tmp_buy_price = Float.parseFloat(dtm.getValueAt(j, 2).toString());
-                        if (tmp_ID.equals(sell_id)) {
-                            //用買入價*賣出股數
-                            BUY.push(tmp_buy_price * Float.parseFloat(dtm.getValueAt(i, 4).toString()));
-                        }
-                    }
-                }
-            }
-        }
-
+    //損益試算
+    float RealizeProfitLoss(String ID, String Fieldname) {
         int result = 0;
-        while (SELL.size() != 0) {
-            result += SELL.pop();
-            result -= BUY.pop();
-        }
+        DataBase_Work db = new DataBase_Work();
+        db.SQL_Select_OrderBy(ID, Fieldname);
+
         return result;
     }
 
+    //-----------------------------------------
     String AddComma(float _float) {
         String CommaString = "";
         String string_sum = String.valueOf(_float);
