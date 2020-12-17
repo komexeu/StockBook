@@ -133,6 +133,8 @@ public class GUI {
         _newData_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                String mode = String.valueOf(_JFieldNamebox.getItemAt(_JFieldNamebox.getSelectedIndex()));
+
                 if (_Num_of_shares_text.getText().equals(""))
                     return;
                 for (int i = 0; i < _ID_text.getText().length(); ++i)
@@ -142,7 +144,7 @@ public class GUI {
                 DataBase_Work db_work = new DataBase_Work();
                 db_work.Add_Data(_ID_text.getText(), _NAME_text.getText(),
                         _Buy_Sell_text.getText(), _Num_of_shares_text.getText(),
-                        "BUY", _Jbox.getSelectedIndex(), UP2DOWN);
+                        mode, _Jbox.getSelectedIndex(), UP2DOWN);
                 UpdateTableModel(db_work.GetTableModel());
                 UpdateTopData(_Num_of_shares_text.getText());
             }
@@ -197,7 +199,7 @@ public class GUI {
         String price = "$ " + cal.AddComma(cal.SumOfStock(_search_text.getText()));
         first.text.setText(price);
         second.text.setText(cal.AddComma(cal.averageOfBuy(_search_text.getText())));
-        third.text.setText("$ " + cal.AddComma(cal.RealizeProfitLoss(ID, SORTRULE)));
+        third.text.setText("$ " + cal.AddComma(cal.RealizeProfitLoss(ID)));
     }
 }
 

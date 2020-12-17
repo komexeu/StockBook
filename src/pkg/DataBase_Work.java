@@ -75,11 +75,11 @@ public class DataBase_Work {
         switch (mode) {
             case 0:
                 complax_order = "INSERT INTO stock_db(ID,NAME,BUY,SELL,NumberOfShares) VALUES(\""
-                        + ID + "\",\"" + NAME + "\",\"" + Price + "\",\"" + "" + "\",";
+                        + ID + "\",\"" + NAME + "\",\"" + Price + "\",\"" + "0" + "\",";
                 break;
             case 1:
                 complax_order = "INSERT INTO stock_db(ID,NAME,BUY,SELL,NumberOfShares) VALUES(\""
-                        + ID + "\",\"" + NAME + "\",\"" + "" + "\",\"" + Price + "\",";
+                        + ID + "\",\"" + NAME + "\",\"" + "0" + "\",\"" + Price + "\",";
                 break;
         }
         complax_order += (NumOfShares + ");");
@@ -117,6 +117,7 @@ public class DataBase_Work {
 
     void Add_Data(String ID, String NAME, String Price, String NumOfShares, String Fieldname, int mode, boolean up2down) {
         try {
+            Fieldname=Fieldname.split(" ")[0];
             String complax_order = SQL_Insert(ID, NAME, Price, NumOfShares, mode);
 
             System.out.println(complax_order);
