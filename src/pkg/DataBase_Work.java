@@ -10,10 +10,10 @@ public class DataBase_Work {
     private static DefaultTableModel _tableModel;
 
     DataBase_Work() {
-        ConnectDataBase();
+        SQL_Connect();
     }
 
-    void ConnectDataBase() {
+    void SQL_Connect() {
         try {
             conn = DriverManager.getConnection(
                     "jdbc:mysql://127.0.0.1:3306/stockbook_db?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8",
@@ -24,15 +24,35 @@ public class DataBase_Work {
             System.out.println(e);
         }
     }
+    String SQL_Select(String order){
+        //"SELECT * FROM stock_db"
+        String complax_order = "";
+        if (order.length() == 0)
+            complax_order = "SELECT * FROM stock_db;";
+        else
+            complax_order = "SELECT * FROM stock_db WHERE ID =" + order + ";";
+        return complax_order;
+    }
+    String SQL_Insert(String ID, String NAME, String Price, String NumOfShares, int mode){
+        //"INSERT INTO stock_db(ID,NAME,Price,SELL) VALUES();"
+        String complax_order = "";
+        switch (mode) {
+            case 0:
+                complax_order = "INSERT INTO stock_db(ID,NAME,BUY,SELL,NumberOfShares) VALUES(\""
+                        + ID + "\",\"" + NAME + "\",\"" + Price + "\",\"" + "" + "\",";
+                break;
+            case 1:
+                complax_order = "INSERT INTO stock_db(ID,NAME,BUY,SELL,NumberOfShares) VALUES(\""
+                        + ID + "\",\"" + NAME + "\",\"" + "" + "\",\"" + Price + "\",";
+                break;
+        }
+        complax_order += (NumOfShares + ");");
+        return complax_order;
+    }
 
     void Search(String order) {
         try {
-            //"SELECT * FROM stock_db"
-            String complax_order = "";
-            if (order.length() == 0)
-                complax_order = "SELECT * FROM stock_db;";
-            else
-                complax_order = "SELECT * FROM stock_db WHERE ID =" + order + ";";
+            String complax_order = SQL_Select(order);
             System.out.println(complax_order);
             ResultSet rs = stmt.executeQuery(complax_order);
             ResultSetMetaData rsmd = rs.getMetaData();
@@ -61,19 +81,7 @@ public class DataBase_Work {
 
     void Add_Data(String ID, String NAME, String Price, String NumOfShares, int mode) {
         try {
-            //"INSERT INTO stock_db(ID,NAME,Price,SELL) VALUES();"
-            String complax_order = "";
-            switch (mode) {
-                case 0:
-                    complax_order = "INSERT INTO stock_db(ID,NAME,BUY,SELL,NumberOfShares) VALUES(\""
-                            + ID + "\",\"" + NAME + "\",\"" + Price + "\",\"" + "" + "\",";
-                    break;
-                case 1:
-                    complax_order = "INSERT INTO stock_db(ID,NAME,BUY,SELL,NumberOfShares) VALUES(\""
-                            + ID + "\",\"" + NAME + "\",\"" + "" + "\",\"" + Price + "\",";
-                    break;
-            }
-            complax_order += (NumOfShares + ");");
+            String complax_order = SQL_Insert(ID,NAME,Price,NumOfShares,mode);
 
             System.out.println(complax_order);
             stmt.executeUpdate(complax_order);
