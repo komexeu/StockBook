@@ -24,13 +24,23 @@ public class DataBase_Work {
             System.out.println(e);
         }
     }
-    String SQL_Select(String order){
+    String SQL_Select_Where(String order){
         //"SELECT * FROM stock_db"
         String complax_order = "";
         if (order.length() == 0)
             complax_order = "SELECT * FROM stock_db;";
         else
             complax_order = "SELECT * FROM stock_db WHERE ID =" + order + ";";
+        return complax_order;
+    }
+    String SQL_Select_OrderBy(String order){
+        String complax_order = "";
+
+        if (order.length() == 0)
+            complax_order = "SELECT * FROM stock_db ORDER BY ID;";
+        else
+            complax_order = "SELECT * FROM stock_db WHERE ID =" + order + " ORDER BY ID;";
+
         return complax_order;
     }
     String SQL_Insert(String ID, String NAME, String Price, String NumOfShares, int mode){
@@ -52,7 +62,7 @@ public class DataBase_Work {
 
     void Search(String order) {
         try {
-            String complax_order = SQL_Select(order);
+            String complax_order = SQL_Select_OrderBy(order);
             System.out.println(complax_order);
             ResultSet rs = stmt.executeQuery(complax_order);
             ResultSetMetaData rsmd = rs.getMetaData();
