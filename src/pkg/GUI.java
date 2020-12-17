@@ -8,7 +8,8 @@ import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
 
 public class GUI {
-    String SORTRULE="ID";
+    String SORTRULE = "ID";
+    Boolean UP2DOWN = true;
 
     JFrame _frame = new JFrame("Stock GUI");
 
@@ -42,7 +43,6 @@ public class GUI {
     RoundPanel second;
     RoundPanel third;
     //----------------------
-    DataBase_Work db_work = new DataBase_Work();
 
     GUI() {
         _frame.setSize(1000, 500);
@@ -75,7 +75,7 @@ public class GUI {
         first.InitData("$ --.--");
 
         second = new RoundPanel(new Color(180, 180, 230));
-        second.InitTitle("持有股數");
+        second.InitTitle("買進均價");
         second.InitData("--.--");
 
         third = new RoundPanel(new Color(150, 150, 200));
@@ -88,7 +88,8 @@ public class GUI {
         _mid_panel.add(mid_top_panel, BorderLayout.NORTH);
         _mid_panel.add(_scrollPane, BorderLayout.CENTER);
 
-        String FieldName[] = {"ID", "NAME","BUY","SELL","NumberOfShares"};
+        String FieldName[] = {"ID v", "ID ^", "NAME v", "NAME ^",
+                "BUY v", "BUY ^", "SELL v", "SELL ^", "NumberOfShares v", "NumberOfShares ^"};
         _JFieldNamebox = new JComboBox(FieldName);
         _left_panel.add(_JFieldNamebox);
         _search.setText("ID檢索 : ");
@@ -122,7 +123,8 @@ public class GUI {
                     if (!Character.isDigit(order_text.charAt(i)))
                         return;
 
-                db_work.Search(order_text, SORTRULE);
+                DataBase_Work db_work = new DataBase_Work();
+                db_work.Search(order_text, SORTRULE, UP2DOWN);
                 UpdateTableModel(db_work.GetTableModel());
                 UpdateTopData(order_text);
             }
@@ -137,9 +139,10 @@ public class GUI {
                     if (!Character.isDigit(_ID_text.getText().charAt(i)))
                         return;
 
+                DataBase_Work db_work = new DataBase_Work();
                 db_work.Add_Data(_ID_text.getText(), _NAME_text.getText(),
                         _Buy_Sell_text.getText(), _Num_of_shares_text.getText(),
-                        "BUY", _Jbox.getSelectedIndex());
+                        "BUY", _Jbox.getSelectedIndex(), UP2DOWN);
                 UpdateTableModel(db_work.GetTableModel());
                 UpdateTopData(_Num_of_shares_text.getText());
             }
@@ -164,14 +167,19 @@ public class GUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String mode = String.valueOf(_JFieldNamebox.getItemAt(_JFieldNamebox.getSelectedIndex()));
-                SORTRULE=mode;
+                if (_JFieldNamebox.getSelectedIndex() % 2 == 0)
+                    UP2DOWN = true;
+                else
+                    UP2DOWN = false;
+                SORTRULE = mode;
 
                 String order_text = _search_text.getText();
                 for (int i = 0; i < order_text.length(); ++i)
                     if (!Character.isDigit(order_text.charAt(i)))
                         return;
 
-                db_work.Search(order_text, SORTRULE);
+                DataBase_Work db_work = new DataBase_Work();
+                db_work.Search(order_text, SORTRULE, UP2DOWN);
                 UpdateTableModel(db_work.GetTableModel());
                 UpdateTopData(order_text);
             }
@@ -184,15 +192,12 @@ public class GUI {
     }
 
     void UpdateTopData(String ID) {
+        DataBase_Work db_work = new DataBase_Work();
         Calculate cal = new Calculate(db_work.GetTableModel());
         String price = "$ " + cal.AddComma(cal.SumOfStock(_search_text.getText()));
         first.text.setText(price);
-        second.text.setText(cal.AddComma(cal.averageOfBuy()));
+        second.text.setText(cal.AddComma(cal.averageOfBuy(_search_text.getText())));
         third.text.setText("$ " + cal.AddComma(cal.RealizeProfitLoss(ID, SORTRULE)));
-    }
-
-    void SetSORTRULE(String rule){
-        SORTRULE=rule;
     }
 }
 

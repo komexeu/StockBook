@@ -11,7 +11,7 @@ public class DataBase_Work {
     private static Statement stmt;
     private static DefaultTableModel _tableModel;
 
-    private  ResultSet rs;
+    private ResultSet rs;
 
     DataBase_Work() {
         SQL_Connect();
@@ -52,14 +52,20 @@ public class DataBase_Work {
         return complax_order;
     }
 
-    String SQL_Select_OrderBy(String order, String Fieldname) {
+    String SQL_Select_OrderBy(String order, String Fieldname, boolean up2down) {
         String complax_order = "";
-
+        Fieldname=Fieldname.split(" ")[0];
         if (order.length() == 0)
-            complax_order = "SELECT * FROM stock_db ORDER BY " + Fieldname + ";";
+            complax_order = "SELECT * FROM stock_db ORDER BY " + Fieldname;
         else
-            complax_order = "SELECT * FROM stock_db WHERE ID =" + order + " ORDER BY " + Fieldname + ";";
+            complax_order = "SELECT * FROM stock_db WHERE ID =" + order + " ORDER BY " + Fieldname;
 
+        if (up2down)
+            complax_order += " DESC;";
+        else
+            complax_order += " ASC;";
+
+        System.out.println("HERE-> " + complax_order);
         return complax_order;
     }
 
@@ -80,9 +86,9 @@ public class DataBase_Work {
         return complax_order;
     }
 
-    void Search(String order, String Fieldname) {
+    void Search(String order, String Fieldname, boolean up2down) {
         try {
-            String complax_order = SQL_Select_OrderBy(order, Fieldname);
+            String complax_order = SQL_Select_OrderBy(order, Fieldname, up2down);
             System.out.println(complax_order);
             ResultSet rs = stmt.executeQuery(complax_order);
             ResultSetMetaData rsmd = rs.getMetaData();
@@ -109,14 +115,14 @@ public class DataBase_Work {
         }
     }
 
-    void Add_Data(String ID, String NAME, String Price, String NumOfShares, String Fieldname, int mode) {
+    void Add_Data(String ID, String NAME, String Price, String NumOfShares, String Fieldname, int mode, boolean up2down) {
         try {
             String complax_order = SQL_Insert(ID, NAME, Price, NumOfShares, mode);
 
             System.out.println(complax_order);
             stmt.executeUpdate(complax_order);
 
-            Search(ID, Fieldname);
+            Search(ID, Fieldname,up2down);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(e);

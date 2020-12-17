@@ -19,10 +19,9 @@ public class Calculate {
         try {
             String complax_order = "";
             if (ID.length() == 0)
-                complax_order = "SELECT * FROM stock_db ORDER BY BUY DESC";
+                complax_order = "SELECT * FROM stock_db WHERE BUY !=0 ORDER BY BUY DESC";
             else
-                complax_order = "SELECT * FROM stock_db WHERE ID =" + ID + " ORDER BY BUY DESC;";
-            System.out.println("HERE-> " + complax_order);
+                complax_order = "SELECT * FROM stock_db WHERE BUY !=0 && ID =" + ID + " ORDER BY BUY DESC;";
             DataBase_Work dtb = new DataBase_Work();
             ResultSet rs = dtb.SQL_Order(complax_order);
             ResultSetMetaData rsmd = rs.getMetaData();
@@ -32,10 +31,8 @@ public class Calculate {
             while (rs.next()) {
                 float tmp_buy = Float.parseFloat(rs.getString(3));
                 int tmp_num = Integer.parseInt(rs.getString(5));
-                System.out.println(tmp_num);
                 Sum += tmp_buy * tmp_num * 1.001425;
             }
-
             return Sum;
         } catch (Exception e) {
             e.printStackTrace();
@@ -50,24 +47,46 @@ public class Calculate {
         return ex;
     }
 
-    //買進均價
-    //投資成本/持有股數
-    int averageOfBuy() {
-        int n = 0;
+    //買進均價(不含手續費)
+    //投資成本(不含手續費)/持有股數
+    float averageOfBuy(String ID) {
+        int num = 0;
+        try {
+            String complax_order = "";
+            if (ID.length() == 0)
+                complax_order = "SELECT * FROM stock_db WHERE BUY !=0 ORDER BY BUY DESC";
+            else
+                complax_order = "SELECT * FROM stock_db WHERE BUY !=0 && ID =" + ID + " ORDER BY BUY DESC;";
+            DataBase_Work dtb = new DataBase_Work();
+            ResultSet rs = dtb.SQL_Order(complax_order);
+            ResultSetMetaData rsmd = rs.getMetaData();
 
-        for (int i = 0; i < dtm.getRowCount(); ++i) {
-            int tmp = Integer.parseInt(dtm.getValueAt(i, 4).toString());
-            n = dtm.getValueAt(i, 2).equals("") ? n - tmp : n + tmp;
+
+            int sum_num = 0;
+            float sum = 0;
+            while (rs.next()) {
+                float tmp_num = Float.parseFloat(rs.getString(5));
+                float tmp_buy = Float.parseFloat(rs.getString(3));
+                //買進股數
+                sum_num += tmp_num;
+                //投資成本(不含手續費)
+                sum += tmp_buy * tmp_num;
+                //剩餘持有股數(有賣出資料)
+                //sum_num += Float.parseFloat(rs.getString(3)) == 0 ? -tmp_num : tmp_num;
+            }
+
+            return sum / sum_num;
+        } catch (Exception e) {
+
+            return num;
         }
-
-        return n;
     }
 
     //損益試算
     float RealizeProfitLoss(String ID, String Fieldname) {
         int result = 0;
         DataBase_Work db = new DataBase_Work();
-        db.SQL_Select_OrderBy(ID, Fieldname);
+        //db.SQL_Select_OrderBy(ID, Fieldname);
 
         return result;
     }
