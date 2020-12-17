@@ -5,7 +5,6 @@ import java.util.Stack;
 import java.util.Vector;
 
 public class Calculate {
-    int Sum = 0;
     int expenses = 0;
     DefaultTableModel dtm;
 
@@ -13,12 +12,14 @@ public class Calculate {
         dtm = defaultTableModel;
     }
 
-    int SumOfStock() {
+    //投資金額
+    float SumOfStock() {
         try {
+            float Sum = 0;
             for (int i = 0; i < dtm.getRowCount(); ++i) {
                 if (!dtm.getValueAt(i, 2).toString().equals("")) {
                     Float tmp = Float.parseFloat(dtm.getValueAt(i, 2).toString());
-                    Sum += Math.round(tmp * Integer.parseInt(dtm.getValueAt(i, 4).toString()));
+                    Sum += tmp * Integer.parseInt(dtm.getValueAt(i, 4).toString());
                 }
             }
 
@@ -31,6 +32,7 @@ public class Calculate {
         }
     }
 
+    //回收金額
     int ExpensesOfStock() {
         try {
             for (int i = 0; i < dtm.getRowCount(); ++i) {
@@ -47,17 +49,30 @@ public class Calculate {
         }
     }
 
-    int RealizeProfitLoss() {
+    //剩餘股數
+    int NumOfShares() {
+        int n = 0;
+
+        for (int i = 0; i < dtm.getRowCount(); ++i) {
+            int tmp = Integer.parseInt(dtm.getValueAt(i, 4).toString());
+            n = dtm.getValueAt(i, 2).equals("") ? n - tmp : n + tmp;
+        }
+
+        return n;
+    }
+
+    //損益
+    float RealizeProfitLoss() {
         //所有買入價
-        Stack<Integer> BUY = new Stack<>();
+        Stack<Float> BUY = new Stack<>();
         //所有賣出價
-        Stack<Integer> SELL = new Stack<>();
+        Stack<Float> SELL = new Stack<>();
         Stack<String> SELL_ID = new Stack<>();
 
         for (int i = 0; i < dtm.getRowCount(); ++i) {
             if (!dtm.getValueAt(i, 3).toString().equals("")) {
                 Float sell_price = Float.parseFloat(dtm.getValueAt(i, 3).toString());
-                SELL.push(Math.round(sell_price * Integer.parseInt(dtm.getValueAt(i, 4).toString())));
+                SELL.push(sell_price * Float.parseFloat(dtm.getValueAt(i, 4).toString()));
                 //取得賣出ID
                 String sell_id = dtm.getValueAt(i, 0).toString();
                 //同ID只搜一次
@@ -70,19 +85,20 @@ public class Calculate {
                             continue;
                         Float tmp_buy_price = Float.parseFloat(dtm.getValueAt(j, 2).toString());
                         if (tmp_ID.equals(sell_id)) {
-                            BUY.push(Math.round(tmp_buy_price * Integer.parseInt(dtm.getValueAt(j, 4).toString())));
-                            }
+                            //用買入價*賣出股數
+                            BUY.push(tmp_buy_price * Float.parseFloat(dtm.getValueAt(i, 4).toString()));
+                        }
                     }
                 }
             }
         }
 
-        int result = 0;
+        float result = 0;
         while (SELL.size() != 0) {
-            int s = SELL.pop();
+            float s = SELL.pop();
             result += s;
             System.out.println(s);
-            int b = BUY.pop();
+            float b = BUY.pop();
             result -= b;
             System.out.println(b);
         }
@@ -90,10 +106,28 @@ public class Calculate {
         return result;
     }
 
-    String AddComma(int s) {
+    String AddComma(float _float) {
         String CommaString = "";
+        String string_sum = String.valueOf(_float);
+        String split_sum[] = string_sum.split("\\.");
+        int flag = split_sum[0].length() % 3;
+        for (int i = 1; i <= split_sum[0].length(); ++i) {
+            CommaString += split_sum[0].charAt(i - 1);
+            if (split_sum[0].charAt(0) == '-') {
+                if (((i - flag) % 3 == 0) && i != split_sum[0].length() && i != 1)
+                    CommaString += ",";
+            } else {
+                if (((i - flag) % 3 == 0) && i != split_sum[0].length())
+                    CommaString += ",";
+            }
+        }
+        CommaString += ("." + split_sum[1]);
+        return CommaString;
+    }
 
-        String string_sum = String.valueOf(s);
+    String AddComma(int _int) {
+        String CommaString = "";
+        String string_sum = String.valueOf(_int);
         int flag = string_sum.length() % 3;
         for (int i = 1; i <= string_sum.length(); ++i) {
             CommaString += string_sum.charAt(i - 1);

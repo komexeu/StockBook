@@ -35,9 +35,9 @@ public class GUI {
     DefaultTableModel _dtm = new DefaultTableModel();
     JScrollPane _scrollPane;
 
-    RoundPanel one;
-    RoundPanel two;
-    RoundPanel three;
+    RoundPanel first;
+    RoundPanel second;
+    RoundPanel third;
     //----------------------
     DataBase_Work db_work = new DataBase_Work();
 
@@ -67,20 +67,20 @@ public class GUI {
         JPanel mid_top_panel = new JPanel();
         mid_top_panel.setLayout(new GridLayout());
 
-        one = new RoundPanel(new Color(200, 200, 255));
-        one.InitTitle("投資金額");
-        one.InitData("$ --.--");
+        first = new RoundPanel(new Color(200, 200, 255));
+        first.InitTitle("投資金額");
+        first.InitData("$ --.--");
 
-        two = new RoundPanel(new Color(180, 180, 230));
-        two.InitTitle("均價");
-        two.InitData("$ --.--");
+        second = new RoundPanel(new Color(180, 180, 230));
+        second.InitTitle("持有股數");
+        second.InitData("--.--");
 
-        three = new RoundPanel(new Color(150, 150, 200));
-        three.InitTitle("已實現損益");
-        three.InitData(" --.--");
-        mid_top_panel.add(one);
-        mid_top_panel.add(two);
-        mid_top_panel.add(three);
+        third = new RoundPanel(new Color(150, 150, 200));
+        third.InitTitle("已實現損益");
+        third.InitData(" --.--");
+        mid_top_panel.add(first);
+        mid_top_panel.add(second);
+        mid_top_panel.add(third);
 
         _mid_panel.add(mid_top_panel, BorderLayout.NORTH);
         _mid_panel.add(_scrollPane, BorderLayout.CENTER);
@@ -163,9 +163,9 @@ public class GUI {
     void UpdateTopData(){
         Calculate cal = new Calculate(db_work.GetTableModel());
         String price = "$ " + cal.AddComma(cal.SumOfStock());
-        one.text.setText(price);
-        two.text.setText("$ " + cal.AddComma(cal.ExpensesOfStock()));
-        three.text.setText("$ " + cal.AddComma(cal.RealizeProfitLoss()));
+        first.text.setText(price);
+        second.text.setText(cal.AddComma(cal.NumOfShares()));
+        third.text.setText("$ " + cal.AddComma(cal.RealizeProfitLoss()));
     }
 }
 
