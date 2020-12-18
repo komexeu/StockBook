@@ -14,19 +14,11 @@ public class DataBase_Work {
     private ResultSet rs;
 
     DataBase_Work() {
-        SQL_Connect();
-    }
-
-    void SQL_Connect() {
-        try {
-            conn = DriverManager.getConnection(
-                    "jdbc:mysql://127.0.0.1:3306/stockbook_db?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8",
-                    "root", "password");
-            stmt = conn.createStatement();
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println(e);
-        }
+        SQL_Connect connect = new SQL_Connect(
+                "jdbc:mysql://127.0.0.1:3306/stockbook_db?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8"
+        );
+        conn = connect.conn;
+        stmt = connect.stmt;
     }
 
     //SQL結果
@@ -42,13 +34,13 @@ public class DataBase_Work {
         }
     }
 
-    String SQL_Select_Where(String order) {
+    String SQL_Select_Where(String table, String order) {
         //"SELECT * FROM stock_db"
         String complax_order = "";
         if (order.length() == 0)
-            complax_order = "SELECT * FROM stock_db;";
+            complax_order = "SELECT * FROM " + table + ";";
         else
-            complax_order = "SELECT * FROM stock_db WHERE stock_ID =" + order + ";";
+            complax_order = "SELECT * FROM " + table + " WHERE stock_ID =" + order + ";";
         return complax_order;
     }
 
@@ -65,7 +57,22 @@ public class DataBase_Work {
         else
             complax_order += " ASC;";
 
-        System.out.println("HERE-> " + complax_order);
+        return complax_order;
+    }
+
+    String SQL_Select_OrderBy(String table, String order, String Fieldname, boolean up2down) {
+        String complax_order = "";
+        Fieldname = Fieldname.split(" ")[0];
+        if (order.length() == 0)
+            complax_order = "SELECT * FROM " + table + " ORDER BY " + Fieldname;
+        else
+            complax_order = "SELECT * FROM " + table + " WHERE stock_ID =" + order + " ORDER BY " + Fieldname;
+
+        if (up2down)
+            complax_order += " DESC;";
+        else
+            complax_order += " ASC;";
+
         return complax_order;
     }
 
@@ -97,9 +104,8 @@ public class DataBase_Work {
 
     void Search(String order, String Fieldname, boolean up2down) {
         try {
-
             String complax_order = SQL_Select_OrderBy(order, Fieldname, up2down);
-            System.out.println(complax_order);
+            System.out.println("Search->" + complax_order);
             ResultSet rs = stmt.executeQuery(complax_order);
             ResultSetMetaData rsmd = rs.getMetaData();
             Vector<String> columnNames = new Vector<>();
@@ -125,19 +131,74 @@ public class DataBase_Work {
         }
     }
 
-    //從stockbook_db抓資料寫入realized_db
-    void Sell_Insert() {
+    //新增資料時將買入資料填入持有紀錄
+    void Buy_Insert(int ID, String stock_ID, String NAME, String Price, String NumOfShares) {
+        String sql = "INSERT INTO hold_db(ID,stock_ID,NAME,BUY,NumberOfShares) VALUES("
+                + ID + ",\"" +
+                stock_ID + "\",\"" +
+                NAME + "\",\"" +
+                Price + "\",";
+        sql += (NumOfShares + ");");
+        System.out.println("BUY_Insert->" + sql);
         try {
-            Connection conn_realized = DriverManager.getConnection(
-                    "jdbc:mysql://127.0.0.1:3306/realized_db?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8",
-                    "root", "password");
-            Statement stmt_realized = conn_realized.createStatement();
+            stmt.executeUpdate(sql);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e);
+        }
+    }
 
+    //新增資料時將賣出資料填入賣出紀錄
+    //從stockbook_db抓資料寫入realized_db
+    boolean Sell_Insert(int ID, String stock_ID, String NAME, String Price, String NumOfShares, String Fieldname) {
+        try {
             //判斷是否有足夠庫存
             //插入資料
-            //
-        } catch (Exception e) {
+            int hold_num = 0;
+            Vector<Integer> id = new Vector<>();
 
+            String sql = SQL_Select_OrderBy("hold_db", stock_ID, "NumberOfShares", true);
+            System.out.println("SELL->" + sql);
+            stmt.executeQuery(sql);
+            ResultSet rs = stmt.getResultSet();
+            //從已有資料中找到可扣除資料
+            hold_num = 0;
+            float avg_buy = 0;
+            int do_times = 0;
+            while (rs.next()) {
+                ++do_times;
+                hold_num += Integer.parseInt(rs.getString(5));
+                System.out.println(hold_num);
+                id.add(Integer.parseInt(rs.getString(1)));
+                if (hold_num - Integer.parseInt(NumOfShares) >= 0) {
+                    //新增賣出資料
+                    String str_ID = (String.valueOf(ID) + rs.getString(1));
+                    sql = "INSERT INTO realized_db(ID,stock_ID,NAME,BUY,SELL,TAX,TRANSACTION_NUM,PROFIT_LOSS) VALUES(\"" +
+                            str_ID + "\",\"" +
+                            stock_ID + "\",\"" +
+                            NAME + "\"," +
+                            Float.parseFloat(rs.getString(4)) + "," +
+                            Price + "," +
+                            0.123 + "," +
+                            NumOfShares + ",\"" +
+                            String.valueOf(Float.parseFloat(Price) - Float.parseFloat(rs.getString(4))) + "\");";
+                    System.out.println(sql);
+                    stmt.executeUpdate(sql);
+                    //刪除擁有資料
+                    for (int i = 0; i < id.size(); ++i) {
+                        sql = "DELETE FROM hold_db WHERE ID =" + id.elementAt(i) + ";";
+                        stmt.executeUpdate(sql);
+                        System.out.println(id.elementAt(i));
+                    }
+                    return true;
+                }
+            }
+            System.out.println("庫存不足");
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e);
+            return false;
         }
     }
 
@@ -148,18 +209,23 @@ public class DataBase_Work {
             ResultSetMetaData rsmd = rs.getMetaData();
             int ID = 0;
             while (rs.next())
-                ID =Integer.parseInt(rs.getString(1));
-            System.out.println(ID);
+                ID = Integer.parseInt(rs.getString(1));
             ID += 1;
 
+            boolean sell_success = true;
+            if (mode == 0)
+                Buy_Insert(ID, stock_ID, NAME, Price, NumOfShares);
+            else
+                sell_success = Sell_Insert(ID, stock_ID, NAME, Price, NumOfShares, Fieldname);
+
             Fieldname = Fieldname.split(" ")[0];
-            String complax_order = SQL_Insert(ID, stock_ID, NAME, Price, NumOfShares, mode);
-
-            System.out.println(complax_order);
-            stmt.executeUpdate(complax_order);
-            Sell_Insert();
-
+            if (sell_success) {
+                String complax_order = SQL_Insert(ID, stock_ID, NAME, Price, NumOfShares, mode);
+                System.out.println("ADD_Data->" + complax_order);
+                stmt.executeUpdate(complax_order);
+            }
             Search(stock_ID, Fieldname, up2down);
+            System.out.println("=====================");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(e);
