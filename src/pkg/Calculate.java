@@ -1,8 +1,7 @@
 package pkg;
 
 import javax.swing.table.DefaultTableModel;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
+import java.sql.*;
 import java.util.Stack;
 import java.util.Vector;
 
@@ -83,23 +82,13 @@ public class Calculate {
         int sum_num = 0;
         float sum = 0;
         try {
-            String complax_order = "";
-            if (stock_ID.length() == 0)
-                complax_order = "SELECT * FROM stock_db WHERE BUY !=0 ORDER BY BUY DESC";
-            else
-                complax_order = "SELECT * FROM stock_db WHERE BUY !=0 && stock_ID =" + stock_ID + " ORDER BY BUY DESC;";
-            DataBase_Work dtb = new DataBase_Work();
-            ResultSet rs = dtb.SQL_Order(complax_order);
-            ResultSetMetaData rsmd = rs.getMetaData();
+            DataBase_Work db=new DataBase_Work();
+            Connection conn = DriverManager.getConnection(
+                    "jdbc:mysql://127.0.0.1:3306/realized_db?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8",
+                    "root", "password");
+            Statement stmt = conn.createStatement();
 
-            while (rs.next()) {
-                float tmp_num = Float.parseFloat(rs.getString(6));
-                float tmp_buy = Float.parseFloat(rs.getString(4));
-                //買進股數
-                sum_num += tmp_num;
-                //投資成本(不含手續費)
-                sum += tmp_buy * tmp_num * 1.001425;
-            }
+            //取得realized_db資料計算收益
 
         } catch (Exception e) {
             e.printStackTrace();

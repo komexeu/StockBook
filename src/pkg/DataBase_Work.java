@@ -54,7 +54,7 @@ public class DataBase_Work {
 
     String SQL_Select_OrderBy(String order, String Fieldname, boolean up2down) {
         String complax_order = "";
-        Fieldname=Fieldname.split(" ")[0];
+        Fieldname = Fieldname.split(" ")[0];
         if (order.length() == 0)
             complax_order = "SELECT * FROM stock_db ORDER BY " + Fieldname;
         else
@@ -69,17 +69,26 @@ public class DataBase_Work {
         return complax_order;
     }
 
-    String SQL_Insert(String stock_ID, String NAME, String Price, String NumOfShares, int mode) {
+    String SQL_Insert(int ID, String stock_ID, String NAME, String Price, String NumOfShares, int mode) {
         //"INSERT INTO stock_db(stock_ID,NAME,Price,SELL) VALUES();"
         String complax_order = "";
         switch (mode) {
             case 0:
-                complax_order = "INSERT INTO stock_db(stock_ID,stock_ID,NAME,BUY,SELL,NumberOfShares) VALUES(\""
-                        + stock_ID + "\",\"" + NAME + "\",\"" + Price + "\",\"" + "0" + "\",";
+                complax_order = "INSERT INTO stock_db(ID,stock_ID,NAME,BUY,SELL,NumberOfShares) VALUES("
+                        + ID + ",\"" +
+                        stock_ID + "\",\"" +
+                        NAME + "\",\"" +
+                        Price + "\",\"" +
+                        "0" + "\",";
+
                 break;
             case 1:
-                complax_order = "INSERT INTO stock_db(stock_ID,stock_ID,NAME,BUY,SELL,NumberOfShares) VALUES(\""
-                        + stock_ID + "\",\"" + NAME + "\",\"" + "0" + "\",\"" + Price + "\",";
+                complax_order = "INSERT INTO stock_db(ID,stock_ID,NAME,BUY,SELL,NumberOfShares) VALUES("
+                        + ID + ",\"" +
+                        stock_ID + "\",\"" +
+                        NAME + "\",\"" +
+                        "0" + "\",\"" +
+                        Price + "\",";
                 break;
         }
         complax_order += (NumOfShares + ");");
@@ -88,6 +97,7 @@ public class DataBase_Work {
 
     void Search(String order, String Fieldname, boolean up2down) {
         try {
+
             String complax_order = SQL_Select_OrderBy(order, Fieldname, up2down);
             System.out.println(complax_order);
             ResultSet rs = stmt.executeQuery(complax_order);
@@ -115,15 +125,41 @@ public class DataBase_Work {
         }
     }
 
+    //從stockbook_db抓資料寫入realized_db
+    void Sell_Insert() {
+        try {
+            Connection conn_realized = DriverManager.getConnection(
+                    "jdbc:mysql://127.0.0.1:3306/realized_db?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8",
+                    "root", "password");
+            Statement stmt_realized = conn_realized.createStatement();
+
+            //判斷是否有足夠庫存
+            //插入資料
+            //
+        } catch (Exception e) {
+
+        }
+    }
+
     void Add_Data(String stock_ID, String NAME, String Price, String NumOfShares, String Fieldname, int mode, boolean up2down) {
         try {
-            Fieldname=Fieldname.split(" ")[0];
-            String complax_order = SQL_Insert(stock_ID, NAME, Price, NumOfShares, mode);
+            String sql = "SELECT COUNT(*) FROM stock_db";
+            ResultSet rs = stmt.executeQuery(sql);
+            ResultSetMetaData rsmd = rs.getMetaData();
+            int ID = 0;
+            while (rs.next())
+                ID =Integer.parseInt(rs.getString(1));
+            System.out.println(ID);
+            ID += 1;
+
+            Fieldname = Fieldname.split(" ")[0];
+            String complax_order = SQL_Insert(ID, stock_ID, NAME, Price, NumOfShares, mode);
 
             System.out.println(complax_order);
             stmt.executeUpdate(complax_order);
+            Sell_Insert();
 
-            Search(stock_ID, Fieldname,up2down);
+            Search(stock_ID, Fieldname, up2down);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(e);

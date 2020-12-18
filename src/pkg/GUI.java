@@ -9,7 +9,7 @@ import java.awt.geom.RoundRectangle2D;
 
 public class GUI {
     String SORTRULE = "ID";
-    Boolean UP2DOWN = true;
+    Boolean UP2DOWN = false;
 
     JFrame _frame = new JFrame("Stock GUI");
 
@@ -88,8 +88,8 @@ public class GUI {
         _mid_panel.add(mid_top_panel, BorderLayout.NORTH);
         _mid_panel.add(_scrollPane, BorderLayout.CENTER);
 
-        String FieldName[] = {"ID v", "ID ^","stock_ID v", "stock_ID ^", "NAME v", "NAME ^",
-                "BUY v", "BUY ^", "SELL v", "SELL ^", "NumberOfShares v", "NumberOfShares ^"};
+        String FieldName[] = {"ID ^", "ID v", "stock_ID ^", "stock_ID v", "NAME ^", "NAME v",
+                "BUY ^", "BUY v", "SELL ^", "SELL v", "NumberOfShares ^", "NumberOfShares v"};
         _JFieldNamebox = new JComboBox(FieldName);
         _left_panel.add(_JFieldNamebox);
         _search.setText("ID檢索 : ");
@@ -142,9 +142,8 @@ public class GUI {
                         return;
 
                 DataBase_Work db_work = new DataBase_Work();
-                db_work.Add_Data(_ID_text.getText(), _NAME_text.getText(),
-                        _Buy_Sell_text.getText(), _Num_of_shares_text.getText(),
-                        mode, _Jbox.getSelectedIndex(), UP2DOWN);
+                db_work.Add_Data(_ID_text.getText(), _NAME_text.getText(), _Buy_Sell_text.getText(),
+                        _Num_of_shares_text.getText(), mode, _Jbox.getSelectedIndex(), UP2DOWN);
                 UpdateTableModel(db_work.GetTableModel());
                 UpdateTopData(_Num_of_shares_text.getText());
             }
@@ -169,7 +168,7 @@ public class GUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String mode = String.valueOf(_JFieldNamebox.getItemAt(_JFieldNamebox.getSelectedIndex()));
-                if (_JFieldNamebox.getSelectedIndex() % 2 == 0)
+                if (_JFieldNamebox.getSelectedIndex() % 2 != 0)
                     UP2DOWN = true;
                 else
                     UP2DOWN = false;
