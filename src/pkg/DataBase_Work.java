@@ -197,7 +197,6 @@ public class DataBase_Work {
             hold_num = 0;
             while (rs.next()) {
                 hold_num += Integer.parseInt(rs.getString(5));
-                System.out.println(hold_num);
                 id.add(Integer.parseInt(rs.getString(1)));
                 if (hold_num - Integer.parseInt(NumOfShares) >= 0) {
                     //新增賣出資料
@@ -212,16 +211,14 @@ public class DataBase_Work {
                             NAME + "\"," +
                             buy_price + "," +
                             price + "," +
-                            tax_price + "," +
+                            tax_price * 1000 + "," +
                             NumOfShares + ",\"" +
                             String.valueOf((sell_price - buy_price - tax_price) * 1000) + "\");";
-                    System.out.println(sql);
                     stmt.executeUpdate(sql);
                     //刪除擁有資料
                     for (int i = 0; i < id.size(); ++i) {
                         sql = "DELETE FROM hold_db WHERE ID =" + id.elementAt(i) + ";";
                         stmt.executeUpdate(sql);
-                        System.out.println(id.elementAt(i));
                     }
                     return true;
                 }

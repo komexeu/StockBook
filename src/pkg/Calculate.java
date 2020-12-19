@@ -76,8 +76,6 @@ public class Calculate {
                 sum_num += tmp_num;
                 //投資成本(不含手續費)
                 sum += tmp_buy * tmp_num;
-                //剩餘持有股數(有賣出資料)
-                //sum_num += Float.parseFloat(rs.getString(3)) == 0 ? -tmp_num : tmp_num;
             }
             return sum / sum_num;
         } catch (Exception e) {

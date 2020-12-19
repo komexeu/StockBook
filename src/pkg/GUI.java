@@ -151,7 +151,8 @@ public class GUI {
                         _Num_of_shares_text.getText(), mode, _JBuySell.getSelectedIndex(), UP2DOWN);
                 db_work.Search(TABLENAME, _ID_text.getText(), SORTRULE, UP2DOWN);
                 UpdateTableModel(db_work.GetTableModel());
-                UpdateTopData(_Num_of_shares_text.getText());
+                String stock_id = _search_text.getText();
+                UpdateTopData(stock_id);
             }
         });
 
