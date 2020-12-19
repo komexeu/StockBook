@@ -44,13 +44,13 @@ public class DataBase_Work {
         return complax_order;
     }
 
-    String SQL_Select_OrderBy(String order, String Fieldname, boolean up2down) {
+    String SQL_Select_OrderBy(String stock_id, String Fieldname, boolean up2down) {
         String complax_order = "";
         Fieldname = Fieldname.split(" ")[0];
-        if (order.length() == 0)
+        if (stock_id.length() == 0)
             complax_order = "SELECT * FROM stock_db ORDER BY " + Fieldname;
         else
-            complax_order = "SELECT * FROM stock_db WHERE stock_ID =" + order + " ORDER BY " + Fieldname;
+            complax_order = "SELECT * FROM stock_db WHERE stock_ID =" + stock_id + " ORDER BY " + Fieldname;
 
         if (up2down)
             complax_order += " DESC;";
@@ -102,9 +102,38 @@ public class DataBase_Work {
         return complax_order;
     }
 
-    void Search(String order, String Fieldname, boolean up2down) {
+    void Search(String stock_id, String Fieldname, boolean up2down) {
         try {
-            String complax_order = SQL_Select_OrderBy(order, Fieldname, up2down);
+            String complax_order = SQL_Select_OrderBy(stock_id, Fieldname, up2down);
+            System.out.println("Search->" + complax_order);
+            ResultSet rs = stmt.executeQuery(complax_order);
+            ResultSetMetaData rsmd = rs.getMetaData();
+            Vector<String> columnNames = new Vector<>();
+            Vector<Vector<String>> data = new Vector<>();
+
+            _tableModel = new DefaultTableModel();
+            for (int i = 0; i < rsmd.getColumnCount(); i++) {
+                columnNames.add(rsmd.getColumnName(i + 1));
+                _tableModel.addColumn(rsmd.getColumnName(i + 1));
+            }
+
+            while (rs.next()) {
+                Vector<String> v = new Vector<>();
+                for (int i = 0; i < rsmd.getColumnCount(); i++) {
+                    v.add(rs.getString(i + 1));
+                }
+                data.add(v);
+                _tableModel.addRow(v);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e);
+        }
+    }
+
+    void Search(String Table, String stock_id, String Fieldname, boolean up2down) {
+        try {
+            String complax_order = SQL_Select_OrderBy(Table, stock_id, Fieldname, up2down);
             System.out.println("Search->" + complax_order);
             ResultSet rs = stmt.executeQuery(complax_order);
             ResultSetMetaData rsmd = rs.getMetaData();
@@ -163,10 +192,7 @@ public class DataBase_Work {
             ResultSet rs = stmt.getResultSet();
             //從已有資料中找到可扣除資料
             hold_num = 0;
-            float avg_buy = 0;
-            int do_times = 0;
             while (rs.next()) {
-                ++do_times;
                 hold_num += Integer.parseInt(rs.getString(5));
                 System.out.println(hold_num);
                 id.add(Integer.parseInt(rs.getString(1)));
@@ -215,14 +241,17 @@ public class DataBase_Work {
             boolean sell_success = true;
             if (mode == 0)
                 Buy_Insert(ID, stock_ID, NAME, Price, NumOfShares);
-            else
+            else {
                 sell_success = Sell_Insert(ID, stock_ID, NAME, Price, NumOfShares, Fieldname);
+            }
 
             Fieldname = Fieldname.split(" ")[0];
             if (sell_success) {
                 String complax_order = SQL_Insert(ID, stock_ID, NAME, Price, NumOfShares, mode);
                 System.out.println("ADD_Data->" + complax_order);
                 stmt.executeUpdate(complax_order);
+            } else {
+                System.out.println("=========FAIL============");
             }
             Search(stock_ID, Fieldname, up2down);
             System.out.println("=====================");

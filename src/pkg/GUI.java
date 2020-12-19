@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
 
 public class GUI {
+    String TABLENAME = "stock_db";
     String SORTRULE = "ID";
     Boolean UP2DOWN = false;
 
@@ -21,8 +22,9 @@ public class GUI {
     JTextField _search_text = new JTextField("", 4);
     roundButton _search_button = new roundButton("搜尋");
 
-    JComboBox _Jbox;
-    JComboBox _JFieldNamebox;
+    JComboBox _JBuySell;
+    JComboBox _JTableSelect;
+    JComboBox _JSortRule;
     JPanel _top_panel = new JPanel();
     JLabel _ID_label = new JLabel("stock_ID:");
     JTextField _ID_text = new JTextField("", 4);
@@ -50,8 +52,8 @@ public class GUI {
 
         _top_panel.setBackground(new Color(180, 180, 255));
         String labels[] = {"買進", "賣出"};
-        _Jbox = new JComboBox(labels);
-        _top_panel.add(_Jbox);
+        _JBuySell = new JComboBox(labels);
+        _top_panel.add(_JBuySell);
         _top_panel.add(_ID_label);
         _top_panel.add(_ID_text);
         _top_panel.add(_NAME_label);
@@ -88,10 +90,13 @@ public class GUI {
         _mid_panel.add(mid_top_panel, BorderLayout.NORTH);
         _mid_panel.add(_scrollPane, BorderLayout.CENTER);
 
-        String FieldName[] = {"ID ^", "ID v", "stock_ID ^", "stock_ID v", "NAME ^", "NAME v",
+        String table_string[] = {"交易紀錄", "庫存股", "售出紀錄"};
+        _JTableSelect = new JComboBox(table_string);
+        _left_panel.add(_JTableSelect);
+        String Sort_string[] = {"ID ^", "ID v", "stock_ID ^", "stock_ID v", "NAME ^", "NAME v",
                 "BUY ^", "BUY v", "SELL ^", "SELL v", "NumberOfShares ^", "NumberOfShares v"};
-        _JFieldNamebox = new JComboBox(FieldName);
-        _left_panel.add(_JFieldNamebox);
+        _JSortRule = new JComboBox(Sort_string);
+        _left_panel.add(_JSortRule);
         _search.setText("ID檢索 : ");
         _search_panel.add(_search);
         _search_panel.add(_search_text);
@@ -118,22 +123,22 @@ public class GUI {
         _search_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String order_text = _search_text.getText();
-                for (int i = 0; i < order_text.length(); ++i)
-                    if (!Character.isDigit(order_text.charAt(i)))
+                String stock_id = _search_text.getText();
+                for (int i = 0; i < stock_id.length(); ++i)
+                    if (!Character.isDigit(stock_id.charAt(i)))
                         return;
 
                 DataBase_Work db_work = new DataBase_Work();
-                db_work.Search(order_text, SORTRULE, UP2DOWN);
+                db_work.Search(stock_id, SORTRULE, UP2DOWN);
                 UpdateTableModel(db_work.GetTableModel());
-                UpdateTopData(order_text);
+                UpdateTopData(stock_id);
             }
         });
 
         _newData_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String mode = String.valueOf(_JFieldNamebox.getItemAt(_JFieldNamebox.getSelectedIndex()));
+                String mode = String.valueOf(_JSortRule.getItemAt(_JSortRule.getSelectedIndex()));
 
                 if (_Num_of_shares_text.getText().equals(""))
                     return;
@@ -143,16 +148,16 @@ public class GUI {
 
                 DataBase_Work db_work = new DataBase_Work();
                 db_work.Add_Data(_ID_text.getText(), _NAME_text.getText(), _Buy_Sell_text.getText(),
-                        _Num_of_shares_text.getText(), mode, _Jbox.getSelectedIndex(), UP2DOWN);
+                        _Num_of_shares_text.getText(), mode, _JBuySell.getSelectedIndex(), UP2DOWN);
                 UpdateTableModel(db_work.GetTableModel());
                 UpdateTopData(_Num_of_shares_text.getText());
             }
         });
 
-        _Jbox.addActionListener(new ActionListener() {
+        _JBuySell.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String mode = String.valueOf(_Jbox.getItemAt(_Jbox.getSelectedIndex()));
+                String mode = String.valueOf(_JBuySell.getItemAt(_JBuySell.getSelectedIndex()));
                 switch (mode) {
                     case "買進":
                         _Buy_Sell_label.setText("買進價:");
@@ -164,25 +169,54 @@ public class GUI {
             }
         });
 
-        _JFieldNamebox.addActionListener(new ActionListener() {
+        _JSortRule.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String mode = String.valueOf(_JFieldNamebox.getItemAt(_JFieldNamebox.getSelectedIndex()));
-                if (_JFieldNamebox.getSelectedIndex() % 2 != 0)
+                //#to-do_fix:三種表排序規則
+                String mode = String.valueOf(_JSortRule.getItemAt(_JSortRule.getSelectedIndex()));
+                if (_JSortRule.getSelectedIndex() % 2 != 0)
                     UP2DOWN = true;
                 else
                     UP2DOWN = false;
                 SORTRULE = mode;
 
-                String order_text = _search_text.getText();
-                for (int i = 0; i < order_text.length(); ++i)
-                    if (!Character.isDigit(order_text.charAt(i)))
+                String stock_id = _search_text.getText();
+                for (int i = 0; i < stock_id.length(); ++i)
+                    if (!Character.isDigit(stock_id.charAt(i)))
                         return;
 
                 DataBase_Work db_work = new DataBase_Work();
-                db_work.Search(order_text, SORTRULE, UP2DOWN);
+                db_work.Search(stock_id, SORTRULE, UP2DOWN);
                 UpdateTableModel(db_work.GetTableModel());
-                UpdateTopData(order_text);
+                UpdateTopData(stock_id);
+            }
+        });
+
+        _JTableSelect.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int mode = _JTableSelect.getSelectedIndex();
+                switch (mode) {
+                    case 0:
+                        TABLENAME = "stock_db";
+                        break;
+                    case 1:
+                        TABLENAME = "hold_db";
+                        break;
+                    case 2:
+                        TABLENAME = "realized_db";
+                        break;
+                }
+
+                String stock_id = _search_text.getText();
+                for (int i = 0; i < stock_id.length(); ++i)
+                    if (!Character.isDigit(stock_id.charAt(i)))
+                        return;
+
+                DataBase_Work db_work = new DataBase_Work();
+                db_work.Search(TABLENAME, stock_id, SORTRULE, UP2DOWN);
+                UpdateTableModel(db_work.GetTableModel());
+                UpdateTopData(stock_id);
             }
         });
     }
