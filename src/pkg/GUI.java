@@ -90,7 +90,7 @@ public class GUI {
         _mid_panel.add(mid_top_panel, BorderLayout.NORTH);
         _mid_panel.add(_scrollPane, BorderLayout.CENTER);
 
-        String table_string[] = {"交易紀錄", "庫存股", "售出紀錄"};
+        String table_string[] = {"交易紀錄", "庫存股", "獲利結算"};
         _JTableSelect = new JComboBox(table_string);
         _left_panel.add(_JTableSelect);
         String Sort_string[] = {"ID ^", "ID v", "stock_ID ^", "stock_ID v", "NAME ^", "NAME v",
@@ -129,7 +129,7 @@ public class GUI {
                         return;
 
                 DataBase_Work db_work = new DataBase_Work();
-                db_work.Search(stock_id, SORTRULE, UP2DOWN);
+                db_work.Search(TABLENAME,stock_id, SORTRULE, UP2DOWN);
                 UpdateTableModel(db_work.GetTableModel());
                 UpdateTopData(stock_id);
             }

@@ -3,7 +3,6 @@ package pkg;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import java.util.Stack;
-import java.util.Vector;
 
 public class Calculate {
     DefaultTableModel dtm;
@@ -23,7 +22,7 @@ public class Calculate {
             else
                 complax_order = "SELECT * FROM stock_db WHERE BUY !=0 && stock_ID =" + stock_ID + " ORDER BY BUY DESC;";
             DataBase_Work dtb = new DataBase_Work();
-            ResultSet rs = dtb.SQL_Order(complax_order);
+            ResultSet rs = dtb.SQL_query(complax_order);
             ResultSetMetaData rsmd = rs.getMetaData();
 
             int j = 0;
@@ -52,15 +51,25 @@ public class Calculate {
         float sum = 0;
         try {
             String complax_order = "";
-            if (stock_ID.length() == 0)
-                complax_order = "SELECT * FROM stock_db WHERE BUY !=0 ORDER BY BUY DESC";
-            else
-                complax_order = "SELECT * FROM stock_db WHERE BUY !=0 && stock_ID =" + stock_ID + " ORDER BY BUY DESC;";
+            String count = "";
             DataBase_Work dtb = new DataBase_Work();
-            ResultSet rs = dtb.SQL_Order(complax_order);
+            if (stock_ID.length() == 0) {
+                complax_order = "SELECT * FROM stock_db WHERE BUY !=0 ORDER BY BUY DESC";
+                ResultSet tmp_rs = dtb.SQL_query("SELECT COUNT(*) FROM stock_db ;");
+                while (tmp_rs.next())
+                    count = tmp_rs.getString(1);
+            } else {
+                complax_order = "SELECT * FROM stock_db WHERE BUY !=0 && stock_ID =" + stock_ID + " ORDER BY BUY DESC;";
+                ResultSet tmp_rs = dtb.SQL_query("SELECT COUNT(*) FROM stock_db WHERE stock_ID = " + stock_ID + ";");
+                while (tmp_rs.next())
+                    count = tmp_rs.getString(1);
+            }
+            System.out.println(count);
+            if (count.equals("0"))
+                return 0;
+
+            ResultSet rs = dtb.SQL_query(complax_order);
             ResultSetMetaData rsmd = rs.getMetaData();
-
-
             while (rs.next()) {
                 float tmp_num = Float.parseFloat(rs.getString(6));
                 float tmp_buy = Float.parseFloat(rs.getString(4));
@@ -71,18 +80,19 @@ public class Calculate {
                 //剩餘持有股數(有賣出資料)
                 //sum_num += Float.parseFloat(rs.getString(3)) == 0 ? -tmp_num : tmp_num;
             }
+            return sum / sum_num;
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(e);
         }
-        return sum / sum_num;
+        return -99.99f;
     }
 
     float averageOfBuy_HandlingFee(String stock_ID) {
         int sum_num = 0;
         float sum = 0;
         try {
-            DataBase_Work db=new DataBase_Work();
+            DataBase_Work db = new DataBase_Work();
             Connection conn = DriverManager.getConnection(
                     "jdbc:mysql://127.0.0.1:3306/realized_db?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8",
                     "root", "password");

@@ -22,8 +22,9 @@ public class DataBase_Work {
     }
 
     //SQL結果
-    ResultSet SQL_Order(String SQL_order) {
+    ResultSet SQL_query(String SQL_order) {
         try {
+            System.out.println("query->"+ SQL_order);
             ResultSet rs = stmt.executeQuery(SQL_order);
 
             return rs;
@@ -60,13 +61,13 @@ public class DataBase_Work {
         return complax_order;
     }
 
-    String SQL_Select_OrderBy(String table, String order, String Fieldname, boolean up2down) {
+    String SQL_Select_OrderBy(String table, String stock_id, String Fieldname, boolean up2down) {
         String complax_order = "";
         Fieldname = Fieldname.split(" ")[0];
-        if (order.length() == 0)
+        if (stock_id.length() == 0)
             complax_order = "SELECT * FROM " + table + " ORDER BY " + Fieldname;
         else
-            complax_order = "SELECT * FROM " + table + " WHERE stock_ID =" + order + " ORDER BY " + Fieldname;
+            complax_order = "SELECT * FROM " + table + " WHERE stock_ID =" + stock_id + " ORDER BY " + Fieldname;
 
         if (up2down)
             complax_order += " DESC;";
@@ -107,6 +108,7 @@ public class DataBase_Work {
             String complax_order = SQL_Select_OrderBy(stock_id, Fieldname, up2down);
             System.out.println("Search->" + complax_order);
             ResultSet rs = stmt.executeQuery(complax_order);
+
             ResultSetMetaData rsmd = rs.getMetaData();
             Vector<String> columnNames = new Vector<>();
             Vector<Vector<String>> data = new Vector<>();
@@ -136,6 +138,7 @@ public class DataBase_Work {
             String complax_order = SQL_Select_OrderBy(Table, stock_id, Fieldname, up2down);
             System.out.println("Search->" + complax_order);
             ResultSet rs = stmt.executeQuery(complax_order);
+
             ResultSetMetaData rsmd = rs.getMetaData();
             Vector<String> columnNames = new Vector<>();
             Vector<Vector<String>> data = new Vector<>();
@@ -198,7 +201,7 @@ public class DataBase_Work {
                 id.add(Integer.parseInt(rs.getString(1)));
                 if (hold_num - Integer.parseInt(NumOfShares) >= 0) {
                     //新增賣出資料
-                    String str_ID = (String.valueOf(ID) + rs.getString(1));
+                    String str_ID = ("B" + String.valueOf(ID) + "S" + rs.getString(1));
                     sql = "INSERT INTO realized_db(ID,stock_ID,NAME,BUY,SELL,TAX,TRANSACTION_NUM,PROFIT_LOSS) VALUES(\"" +
                             str_ID + "\",\"" +
                             stock_ID + "\",\"" +
