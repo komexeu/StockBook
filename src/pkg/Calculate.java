@@ -64,7 +64,6 @@ public class Calculate {
                 while (tmp_rs.next())
                     count = tmp_rs.getString(1);
             }
-            System.out.println(count);
             if (count.equals("0"))
                 return 0;
 
@@ -92,11 +91,7 @@ public class Calculate {
         int sum_num = 0;
         float sum = 0;
         try {
-            DataBase_Work db = new DataBase_Work();
-            Connection conn = DriverManager.getConnection(
-                    "jdbc:mysql://127.0.0.1:3306/realized_db?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8",
-                    "root", "password");
-            Statement stmt = conn.createStatement();
+
 
             //取得realized_db資料計算收益
 

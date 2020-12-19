@@ -129,7 +129,7 @@ public class GUI {
                         return;
 
                 DataBase_Work db_work = new DataBase_Work();
-                db_work.Search(TABLENAME,stock_id, SORTRULE, UP2DOWN);
+                db_work.Search(TABLENAME, stock_id, SORTRULE, UP2DOWN);
                 UpdateTableModel(db_work.GetTableModel());
                 UpdateTopData(stock_id);
             }
@@ -149,6 +149,7 @@ public class GUI {
                 DataBase_Work db_work = new DataBase_Work();
                 db_work.Add_Data(_ID_text.getText(), _NAME_text.getText(), _Buy_Sell_text.getText(),
                         _Num_of_shares_text.getText(), mode, _JBuySell.getSelectedIndex(), UP2DOWN);
+                db_work.Search(TABLENAME, _ID_text.getText(), SORTRULE, UP2DOWN);
                 UpdateTableModel(db_work.GetTableModel());
                 UpdateTopData(_Num_of_shares_text.getText());
             }

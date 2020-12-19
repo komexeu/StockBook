@@ -24,7 +24,7 @@ public class DataBase_Work {
     //SQL結果
     ResultSet SQL_query(String SQL_order) {
         try {
-            System.out.println("query->"+ SQL_order);
+            System.out.println("query->" + SQL_order);
             ResultSet rs = stmt.executeQuery(SQL_order);
 
             return rs;
@@ -45,13 +45,13 @@ public class DataBase_Work {
         return complax_order;
     }
 
-    String SQL_Select_OrderBy(String stock_id, String Fieldname, boolean up2down) {
+    String SQL_Select_OrderBy(String stock_id, String sort_rule, boolean up2down) {
         String complax_order = "";
-        Fieldname = Fieldname.split(" ")[0];
+        sort_rule = sort_rule.split(" ")[0];
         if (stock_id.length() == 0)
-            complax_order = "SELECT * FROM stock_db ORDER BY " + Fieldname;
+            complax_order = "SELECT * FROM stock_db ORDER BY " + sort_rule;
         else
-            complax_order = "SELECT * FROM stock_db WHERE stock_ID =" + stock_id + " ORDER BY " + Fieldname;
+            complax_order = "SELECT * FROM stock_db WHERE stock_ID =" + stock_id + " ORDER BY " + sort_rule;
 
         if (up2down)
             complax_order += " DESC;";
@@ -61,13 +61,13 @@ public class DataBase_Work {
         return complax_order;
     }
 
-    String SQL_Select_OrderBy(String table, String stock_id, String Fieldname, boolean up2down) {
+    String SQL_Select_OrderBy(String table, String stock_id, String sort_rule, boolean up2down) {
         String complax_order = "";
-        Fieldname = Fieldname.split(" ")[0];
+        sort_rule = sort_rule.split(" ")[0];
         if (stock_id.length() == 0)
-            complax_order = "SELECT * FROM " + table + " ORDER BY " + Fieldname;
+            complax_order = "SELECT * FROM " + table + " ORDER BY " + sort_rule;
         else
-            complax_order = "SELECT * FROM " + table + " WHERE stock_ID =" + stock_id + " ORDER BY " + Fieldname;
+            complax_order = "SELECT * FROM " + table + " WHERE stock_ID =" + stock_id + " ORDER BY " + sort_rule;
 
         if (up2down)
             complax_order += " DESC;";
@@ -103,9 +103,9 @@ public class DataBase_Work {
         return complax_order;
     }
 
-    void Search(String stock_id, String Fieldname, boolean up2down) {
+    void Search(String stock_id, String sort_rule, boolean up2down) {
         try {
-            String complax_order = SQL_Select_OrderBy(stock_id, Fieldname, up2down);
+            String complax_order = SQL_Select_OrderBy(stock_id, sort_rule, up2down);
             System.out.println("Search->" + complax_order);
             ResultSet rs = stmt.executeQuery(complax_order);
 
@@ -133,9 +133,9 @@ public class DataBase_Work {
         }
     }
 
-    void Search(String Table, String stock_id, String Fieldname, boolean up2down) {
+    void Search(String Table, String stock_id, String sort_rule, boolean up2down) {
         try {
-            String complax_order = SQL_Select_OrderBy(Table, stock_id, Fieldname, up2down);
+            String complax_order = SQL_Select_OrderBy(Table, stock_id, sort_rule, up2down);
             System.out.println("Search->" + complax_order);
             ResultSet rs = stmt.executeQuery(complax_order);
 
@@ -182,7 +182,7 @@ public class DataBase_Work {
 
     //新增資料時將賣出資料填入賣出紀錄
     //從stockbook_db抓資料寫入realized_db
-    boolean Sell_Insert(int ID, String stock_ID, String NAME, String Price, String NumOfShares, String Fieldname) {
+    boolean Sell_Insert(int ID, String stock_ID, String NAME, String price, String NumOfShares, String Fieldname) {
         try {
             //判斷是否有足夠庫存
             //插入資料
@@ -202,15 +202,19 @@ public class DataBase_Work {
                 if (hold_num - Integer.parseInt(NumOfShares) >= 0) {
                     //新增賣出資料
                     String str_ID = ("B" + String.valueOf(ID) + "S" + rs.getString(1));
+                    float buy_price = Float.parseFloat(rs.getString(4));
+                    float sell_price = Float.parseFloat(price);
+                    float tax_price = buy_price * 0.001425f + sell_price * 0.001425f + sell_price * 0.003f;
+
                     sql = "INSERT INTO realized_db(ID,stock_ID,NAME,BUY,SELL,TAX,TRANSACTION_NUM,PROFIT_LOSS) VALUES(\"" +
                             str_ID + "\",\"" +
                             stock_ID + "\",\"" +
                             NAME + "\"," +
-                            Float.parseFloat(rs.getString(4)) + "," +
-                            Price + "," +
-                            0.123 + "," +
+                            buy_price + "," +
+                            price + "," +
+                            tax_price + "," +
                             NumOfShares + ",\"" +
-                            String.valueOf(Float.parseFloat(Price) - Float.parseFloat(rs.getString(4))) + "\");";
+                            String.valueOf((sell_price - buy_price - tax_price) * 1000) + "\");";
                     System.out.println(sql);
                     stmt.executeUpdate(sql);
                     //刪除擁有資料
@@ -256,7 +260,6 @@ public class DataBase_Work {
             } else {
                 System.out.println("=========FAIL============");
             }
-            Search(stock_ID, Fieldname, up2down);
             System.out.println("=====================");
         } catch (Exception e) {
             e.printStackTrace();
