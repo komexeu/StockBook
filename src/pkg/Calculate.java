@@ -85,61 +85,28 @@ public class Calculate {
         return -99.99f;
     }
 
-    float averageOfBuy_HandlingFee(String stock_ID) {
-        int sum_num = 0;
-        float sum = 0;
-        try {
-
-
-            //取得realized_db資料計算收益
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println(e);
-        }
-        return sum / sum_num;
-    }
-
     //損益試算
     float RealizeProfitLoss(String stock_ID) {
-        Stack BUY_Price = new Stack();
-        Stack SELL_Price = new Stack();
-        int sum_sell_num = 0;
+        float profit_loss=0;
 
         try {
-//            String complax_order = "";
-//            if (stock_ID.length() == 0)
-//                complax_order = "SELECT * FROM stock_db ORDER BY SELL DESC";
-//            else
-//                complax_order = "SELECT * FROM stock_db WHERE stock_ID =" + stock_ID + " ORDER BY SELL DESC;";
-//            DataBase_Work dtb = new DataBase_Work();
-//            ResultSet rs = dtb.SQL_Order(complax_order);
-//            ResultSetMetaData rsmd = rs.getMetaData();
-//
-//            while (rs.next()) {
-//                float tmp_num = Float.parseFloat(rs.getString(6));
-//                float tmp_buy = Float.parseFloat(rs.getString(4));
-//                float tmp_sell = Float.parseFloat(rs.getString(5));
-//                if (tmp_buy == 0) {
-//                    sum_sell_num += tmp_num;
-//                    SELL_Price.push(tmp_sell);
-//                } else {
-//                    sum_sell_num -= tmp_num;
-//                    BUY_Price.push(tmp_buy);
-//                    if (sum_sell_num <= 0)
-//                        break;
-//                }
-//            }
-//
-//            //SumOfStock(stock_ID) +;
+            String complax_order = "";
+            if (stock_ID.length() == 0)
+                complax_order = "SELECT PROFIT_LOSS FROM realized_db ";
+            else
+                complax_order = "SELECT PROFIT_LOSS FROM realized_db WHERE stock_ID =" + stock_ID +";";
+            DataBase_Work dtb = new DataBase_Work();
+            ResultSet rs = dtb.SQL_query(complax_order);
+            ResultSetMetaData rsmd = rs.getMetaData();
+
+            while (rs.next()) {
+                profit_loss+=Float.parseFloat(rs.getString(1));
+            }
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(e);
         }
-
-        float result = 0;
-
-        return result;
+        return profit_loss;
     }
 
     //-----------------------------------------

@@ -23,8 +23,13 @@ public class GUI {
     roundButton _search_button = new roundButton("搜尋");
 
     JComboBox _JBuySell;
+    String labels[] = {"買進", "賣出"};
     JComboBox _JTableSelect;
+    String table_string[] = {"交易紀錄", "庫存股", "獲利結算"};
     JComboBox _JSortRule;
+    String Sort_string[] = {"ID ^", "ID v", "stock_ID ^", "stock_ID v", "NAME ^", "NAME v",
+            "BUY ^", "BUY v", "SELL ^", "SELL v", "NumberOfShares ^", "NumberOfShares v", "TIME ^", "TIME v"};
+
     JPanel _top_panel = new JPanel();
     JLabel _ID_label = new JLabel("stock_ID:");
     JTextField _ID_text = new JTextField("", 4);
@@ -51,7 +56,6 @@ public class GUI {
         _frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         _top_panel.setBackground(new Color(180, 180, 255));
-        String labels[] = {"買進", "賣出"};
         _JBuySell = new JComboBox(labels);
         _top_panel.add(_JBuySell);
         _top_panel.add(_ID_label);
@@ -90,11 +94,9 @@ public class GUI {
         _mid_panel.add(mid_top_panel, BorderLayout.NORTH);
         _mid_panel.add(_scrollPane, BorderLayout.CENTER);
 
-        String table_string[] = {"交易紀錄", "庫存股", "獲利結算"};
+
         _JTableSelect = new JComboBox(table_string);
         _left_panel.add(_JTableSelect);
-        String Sort_string[] = {"ID ^", "ID v", "stock_ID ^", "stock_ID v", "NAME ^", "NAME v",
-                "BUY ^", "BUY v", "SELL ^", "SELL v", "NumberOfShares ^", "NumberOfShares v"};
         _JSortRule = new JComboBox(Sort_string);
         _left_panel.add(_JSortRule);
         _search.setText("ID檢索 : ");
@@ -151,7 +153,7 @@ public class GUI {
                         _Num_of_shares_text.getText(), mode, _JBuySell.getSelectedIndex(), UP2DOWN);
                 db_work.Search(TABLENAME, _ID_text.getText(), SORTRULE, UP2DOWN);
                 UpdateTableModel(db_work.GetTableModel());
-                String stock_id = _search_text.getText();
+                String stock_id = _ID_text.getText();
                 UpdateTopData(stock_id);
             }
         });
@@ -174,11 +176,12 @@ public class GUI {
         _JSortRule.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //todo:三種表排序規則
-                //todo:賣出時判定股票數量，將剩餘股數加入新資料
+                //todo:三種表排序規則，變更資料表時，排序下拉清單內容變更
+                //todo:賣出時判定股票數量，將剩餘股數重新計算並加入新資料
                 //todo:建立所有股票ID/NAME TABLE
                 //todo:除權成本為0，資料判定方法變更
                 //todo:已實現總損益計算
+                //todo:
                 String mode = String.valueOf(_JSortRule.getItemAt(_JSortRule.getSelectedIndex()));
                 if (_JSortRule.getSelectedIndex() % 2 != 0)
                     UP2DOWN = true;
@@ -192,7 +195,7 @@ public class GUI {
                         return;
 
                 DataBase_Work db_work = new DataBase_Work();
-                db_work.Search(stock_id, SORTRULE, UP2DOWN);
+                db_work.Search(TABLENAME,stock_id, SORTRULE, UP2DOWN);
                 UpdateTableModel(db_work.GetTableModel());
                 UpdateTopData(stock_id);
             }
@@ -235,9 +238,9 @@ public class GUI {
     void UpdateTopData(String stock_ID) {
         DataBase_Work db_work = new DataBase_Work();
         Calculate cal = new Calculate(db_work.GetTableModel());
-        String price = "$ " + cal.AddComma(cal.SumOfStock(_search_text.getText()));
+        String price = "$ " + cal.AddComma(cal.SumOfStock(stock_ID));
         first.text.setText(price);
-        second.text.setText(cal.AddComma(cal.averageOfBuy(_search_text.getText())));
+        second.text.setText(cal.AddComma(cal.averageOfBuy(stock_ID)));
         third.text.setText("$ " + cal.AddComma(cal.RealizeProfitLoss(stock_ID)));
     }
 }
