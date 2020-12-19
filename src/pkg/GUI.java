@@ -174,7 +174,11 @@ public class GUI {
         _JSortRule.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //#to-do_fix:三種表排序規則
+                //todo:三種表排序規則
+                //todo:賣出時判定股票數量，將剩餘股數加入新資料
+                //todo:建立所有股票ID/NAME TABLE
+                //todo:除權成本為0，資料判定方法變更
+                //todo:已實現總損益計算
                 String mode = String.valueOf(_JSortRule.getItemAt(_JSortRule.getSelectedIndex()));
                 if (_JSortRule.getSelectedIndex() % 2 != 0)
                     UP2DOWN = true;
