@@ -176,12 +176,20 @@ public class GUI {
         _JSortRule.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //todo:三種表排序規則，變更資料表時，排序下拉清單內容變更
-                //todo:賣出時判定股票數量，將剩餘股數重新計算並加入新資料
-                //todo:建立所有股票ID/NAME TABLE
-                //todo:除權成本為0，資料判定方法變更
-                //todo:已實現總損益計算
-                //todo:
+                //todo (X):三種表排序規則，變更資料表時，排序下拉清單內容變更
+                //                  OR
+                //todo (X):直接在名稱上進行選取
+
+                //todo (X):賣出時判定股票數量，將剩餘股數與成本重新計算並加入新資料
+                //todo (O):建立所有股票ID/NAME TABLE
+                //todo (X):除權成本為0，資料判定方法變更
+                //todo (O):已實現總損益計算
+                //todo (X):計算用BigDecimal
+                //todo (X):放大資料表
+                //todo (X):新增一上欄，顯示獲利%數
+                //todo (X):正規化
+                //todo (X):資料庫新增 %數/總成本 欄位
+
                 String mode = String.valueOf(_JSortRule.getItemAt(_JSortRule.getSelectedIndex()));
                 if (_JSortRule.getSelectedIndex() % 2 != 0)
                     UP2DOWN = true;
