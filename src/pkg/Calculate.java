@@ -5,10 +5,10 @@ import java.sql.*;
 import java.util.Stack;
 
 public class Calculate {
-    DefaultTableModel dtm;
+    String percent = "";
 
     Calculate(DefaultTableModel defaultTableModel) {
-        dtm = defaultTableModel;
+
     }
 
     //投資成本
@@ -87,26 +87,41 @@ public class Calculate {
 
     //損益試算
     float RealizeProfitLoss(String stock_ID) {
-        float profit_loss=0;
+        float profit_loss = 0;
+        float buy_cost = 0;
 
         try {
             String complax_order = "";
             if (stock_ID.length() == 0)
-                complax_order = "SELECT PROFIT_LOSS FROM realized_db ";
+                complax_order = "SELECT PROFIT_LOSS,BUY FROM realized_db ";
             else
-                complax_order = "SELECT PROFIT_LOSS FROM realized_db WHERE stock_ID =" + stock_ID +";";
+                complax_order = "SELECT PROFIT_LOSS,BUY FROM realized_db WHERE stock_ID =" + stock_ID + ";";
             DataBase_Work dtb = new DataBase_Work();
             ResultSet rs = dtb.SQL_query(complax_order);
             ResultSetMetaData rsmd = rs.getMetaData();
 
             while (rs.next()) {
-                profit_loss+=Float.parseFloat(rs.getString(1));
+                profit_loss += Float.parseFloat(rs.getString(1));
+                buy_cost += Float.parseFloat(rs.getString(2));
             }
+            percent = percent_caculate(profit_loss, buy_cost);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(e);
         }
         return profit_loss;
+    }
+
+    //趴數計算顯示
+    private String percent_caculate(float profit_loss, float buy_price) {
+        buy_price*=1000;
+        String tmp_result = String.valueOf((profit_loss / buy_price)*100);
+        String result = (profit_loss < 0 ? "" : "+ ") + tmp_result + "%";
+        return result;
+    }
+
+    String GetPercent() {
+        return percent;
     }
 
     //-----------------------------------------

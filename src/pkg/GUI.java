@@ -241,7 +241,8 @@ public class GUI {
         String price = "$ " + cal.AddComma(cal.SumOfStock(stock_ID));
         first.text.setText(price);
         second.text.setText(cal.AddComma(cal.averageOfBuy(stock_ID)));
-        third.text.setText("$ " + cal.AddComma(cal.RealizeProfitLoss(stock_ID)));
+        third.text.setText("$ " + cal.AddComma(cal.RealizeProfitLoss(stock_ID))+"/ "+
+                cal.GetPercent());
     }
 }
 
@@ -280,7 +281,7 @@ class RoundPanel extends JPanel {
     void InitData(String txt) {
         text.setText(txt);
         text.setForeground(Color.white);
-        text.setPreferredSize(new Dimension(130, 40));
+        text.setPreferredSize(new Dimension(300, 40));
         text.setFont(new Font("Dialog", Font.BOLD, 20));
         text.setBounds(0, 0, 130, 30);
         text.setAlignmentY(0.1f);
