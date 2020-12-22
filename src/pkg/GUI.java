@@ -203,7 +203,7 @@ public class GUI {
                         return;
 
                 DataBase_Work db_work = new DataBase_Work();
-                db_work.Search(TABLENAME,stock_id, SORTRULE, UP2DOWN);
+                db_work.Search(TABLENAME, stock_id, SORTRULE, UP2DOWN);
                 UpdateTableModel(db_work.GetTableModel());
                 UpdateTopData(stock_id);
             }
@@ -249,7 +249,7 @@ public class GUI {
         String price = "$ " + cal.AddComma(cal.SumOfStock(stock_ID));
         first.text.setText(price);
         second.text.setText(cal.AddComma(cal.averageOfBuy(stock_ID)));
-        third.text.setText("$ " + cal.AddComma(cal.RealizeProfitLoss(stock_ID))+"/ "+
+        third.text.setText("$ " + cal.AddComma(cal.RealizeProfitLoss(stock_ID)) + "/ " +
                 cal.GetPercent());
     }
 }

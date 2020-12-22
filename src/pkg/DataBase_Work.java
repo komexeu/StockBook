@@ -1,7 +1,5 @@
 package pkg;
 
-import com.mysql.cj.protocol.Resultset;
-
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import java.util.Vector;
@@ -10,15 +8,14 @@ public class DataBase_Work {
     private static Connection conn;
     private static Statement stmt;
     private static DefaultTableModel _tableModel;
-
     private ResultSet rs;
 
     DataBase_Work() {
         SQL_Connect connect = new SQL_Connect(
                 "jdbc:mysql://127.0.0.1:3306/stockbook_db?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8"
         );
-        conn = connect.conn;
-        stmt = connect.stmt;
+        conn = connect._conn;
+        stmt = connect._stmt;
     }
 
     //SQL結果
