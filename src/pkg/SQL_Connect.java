@@ -21,6 +21,38 @@ public class SQL_Connect {
         }
     }
 
+    //-------------------GET DATA-------------------------
+    ResultSet GET_StockID(String stock_name) {
+        String query = "SELECT ID FROM stockid_information WHERE NAME=" + stock_name + ";";
+        ResultSet rs = SQL_excuteQuery(query);
+        return rs;
+    }
+
+    ResultSet GET_StockName(String stock_id) {
+        String query = "SELECT NAME FROM stockid_information WHERE ID=" + stock_id + ";";
+        ResultSet rs = SQL_excuteQuery(query);
+        return rs;
+    }
+
+    ResultSet GET_BUY(String ID) {
+        String query = "SELECT * FROM stock_db WHERE ID=" + ID + ";";
+        ResultSet rs = SQL_excuteQuery(query);
+        return rs;
+    }
+
+    ResultSet GET_SELL(String ID) {
+        String query = "SELECT * FROM stock_db WHERE ID=" + ID + ";";
+        ResultSet rs = SQL_excuteQuery(query);
+        return rs;
+    }
+
+    ResultSet GET_PROFIT_LOSS(String ProfitLossID) {
+        String query = "SELECT * FROM realized_db WHERE ID=" + ProfitLossID + ";";
+        ResultSet rs = SQL_excuteQuery(query);
+        return rs;
+    }
+
+    //----------------
     ResultSet SQL_excuteQuery(String SQL_order) {
         try {
             System.out.println("query->" + SQL_order);
@@ -42,6 +74,7 @@ public class SQL_Connect {
         }
     }
 
+    //------------------------
     //SELECT * FROM table ;
     String SQL_Select(String table) {
         String query = "SELECT * FROM " + table + ";";

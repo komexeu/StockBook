@@ -9,9 +9,10 @@ public class DataBase_Work {
     private static Statement stmt;
     private static DefaultTableModel _tableModel;
     private ResultSet rs;
+    SQL_Connect connect;
 
     DataBase_Work() {
-        SQL_Connect connect = new SQL_Connect(
+        connect = new SQL_Connect(
                 "jdbc:mysql://127.0.0.1:3306/stockbook_db?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8"
         );
         conn = connect._conn;
@@ -158,6 +159,35 @@ public class DataBase_Work {
             e.printStackTrace();
             System.out.println(e);
         }
+    }
+
+    DefaultTableModel Search_USERS_HOLD(String ID) {
+        //資料庫提取資料，組合新TABLE
+        try {
+            rs = connect.GET_StockName(ID);
+            ResultSetMetaData rsmd = rs.getMetaData();
+            Vector<String> columnNames = new Vector<>();
+            Vector<Vector<String>> data = new Vector<>();
+
+            _tableModel = new DefaultTableModel();
+            for (int i = 0; i < rsmd.getColumnCount(); i++) {
+                columnNames.add(rsmd.getColumnName(i + 1));
+                _tableModel.addColumn(rsmd.getColumnName(i + 1));
+            }
+
+            while (rs.next()) {
+                Vector<String> v = new Vector<>();
+                System.out.println(rs.getFetchSize());
+                System.out.println(rs.getString(1));
+                v.add(rs.getString(1));
+                data.add(v);
+                _tableModel.addRow(v);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e);
+        }
+        return _tableModel;
     }
 
     //新增資料時將買入資料填入持有紀錄
