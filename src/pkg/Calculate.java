@@ -1,10 +1,33 @@
 package pkg;
 
 import javax.swing.table.DefaultTableModel;
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.Stack;
 
+
 public class Calculate {
+    //+
+    public static String add(String s1, String s2) {
+        BigDecimal f1 = new BigDecimal(s1);
+        BigDecimal f2 = new BigDecimal(s2);
+        return f1.add(f2).toString();
+    }
+
+    //*
+    public static String mul(String s1, String s2) {
+        BigDecimal f1 = new BigDecimal(s1);
+        BigDecimal f2 = new BigDecimal(s2);
+        return f1.multiply(f2).toString();
+    }
+
+    public static String mul(String s1, String s2, String s3) {
+        BigDecimal f1 = new BigDecimal(s1);
+        BigDecimal f2 = new BigDecimal(s2);
+        BigDecimal f3 = new BigDecimal(s3);
+        return f1.multiply(f2).multiply(f3).toString();
+    }
+
     String percent = "";
 
     Calculate(DefaultTableModel defaultTableModel) {
@@ -13,8 +36,8 @@ public class Calculate {
 
     //投資成本
     //每筆買入價+手續費
-    float SumOfStock(String stock_ID) {
-        float Sum = 0;
+    String SumOfStock(String stock_ID) {
+        String Sum = "0";
         try {
             String complax_order = "";
             if (stock_ID.length() == 0)
@@ -27,9 +50,11 @@ public class Calculate {
 
             int j = 0;
             while (rs.next()) {
-                float tmp_buy = Float.parseFloat(rs.getString(4));
-                int tmp_num = Integer.parseInt(rs.getString(6));
-                Sum += tmp_buy * tmp_num * 1.001425;
+                String tmp_buy = rs.getString(4);
+                String tmp_num = rs.getString(6);
+                String tmp_result = mul(tmp_buy, tmp_num, String.valueOf(1.001425));
+                System.out.print(Sum+",");
+                Sum = add(Sum, tmp_result);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -114,8 +139,8 @@ public class Calculate {
 
     //趴數計算顯示
     private String percent_caculate(float profit_loss, float buy_price) {
-        buy_price*=1000;
-        String tmp_result = String.valueOf((profit_loss / buy_price)*100);
+        buy_price *= 1000;
+        String tmp_result = String.valueOf((profit_loss / buy_price) * 100);
         String result = (profit_loss < 0 ? "" : "+ ") + tmp_result + "%";
         return result;
     }
@@ -125,10 +150,10 @@ public class Calculate {
     }
 
     //-----------------------------------------
-    String AddComma(float _float) {
+    String AddComma(String s) {
+        System.out.println(s);
         String CommaString = "";
-        String string_sum = String.valueOf(_float);
-        String split_sum[] = string_sum.split("\\.");
+        String split_sum[] = s.split("\\.");
         int flag = split_sum[0].length() % 3;
         for (int i = 1; i <= split_sum[0].length(); ++i) {
             CommaString += split_sum[0].charAt(i - 1);

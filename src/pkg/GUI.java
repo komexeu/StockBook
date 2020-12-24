@@ -248,9 +248,9 @@ public class GUI {
         Calculate cal = new Calculate(db_work.GetTableModel());
         String price = "$ " + cal.AddComma(cal.SumOfStock(stock_ID));
         first.text.setText(price);
-        second.text.setText(cal.AddComma(cal.averageOfBuy(stock_ID)));
-        third.text.setText("$ " + cal.AddComma(cal.RealizeProfitLoss(stock_ID)) + "/ " +
-                cal.GetPercent());
+        //second.text.setText(cal.AddComma(cal.averageOfBuy(stock_ID)));
+       // third.text.setText("$ " + cal.AddComma(cal.RealizeProfitLoss(stock_ID)) + "/ " +
+        //        cal.GetPercent());
     }
 }
 

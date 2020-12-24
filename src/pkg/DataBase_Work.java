@@ -160,27 +160,27 @@ public class DataBase_Work {
             System.out.println(e);
         }
     }
-
-    DefaultTableModel Search_USERS_HOLD(String ID) {
+//測試v
+    DefaultTableModel Search_USERS_HOLD(String stock_id) {
         //資料庫提取資料，組合新TABLE
         try {
-            rs = connect.GET_StockName(ID);
-            ResultSetMetaData rsmd = rs.getMetaData();
-            Vector<String> columnNames = new Vector<>();
-            Vector<Vector<String>> data = new Vector<>();
-
+            //標題
             _tableModel = new DefaultTableModel();
-            for (int i = 0; i < rsmd.getColumnCount(); i++) {
-                columnNames.add(rsmd.getColumnName(i + 1));
-                _tableModel.addColumn(rsmd.getColumnName(i + 1));
-            }
+            _tableModel.addColumn("名稱");
+            _tableModel.addColumn("買入");
 
-            while (rs.next()) {
+            ResultSet rs2 = connect.GET_StockName(stock_id);
+            ResultSetMetaData rsmd1 = rs2.getMetaData();
+            String stock_name = "";
+            while (rs2.next())
+                stock_name = rs2.getString(1);
+
+            ResultSet rs1 = connect.GET_BUY(stock_id);
+            ResultSetMetaData rsmd = rs1.getMetaData();
+            while (rs1.next()) {
                 Vector<String> v = new Vector<>();
-                System.out.println(rs.getFetchSize());
-                System.out.println(rs.getString(1));
-                v.add(rs.getString(1));
-                data.add(v);
+                v.add(rs1.getString(1));
+                v.add(stock_name);
                 _tableModel.addRow(v);
             }
         } catch (Exception e) {

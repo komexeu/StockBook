@@ -29,13 +29,13 @@ public class SQL_Connect {
     }
 
     ResultSet GET_StockName(String stock_id) {
-        String query = "SELECT NAME FROM stockid_information WHERE ID=" + stock_id + ";";
+        String query = "SELECT NAME FROM stockid_information WHERE ID=\"" + stock_id + "\";";
         ResultSet rs = SQL_excuteQuery(query);
         return rs;
     }
 
-    ResultSet GET_BUY(String ID) {
-        String query = "SELECT * FROM stock_db WHERE ID=" + ID + ";";
+    ResultSet GET_BUY(String stock_id) {
+        String query = "SELECT BUY FROM stock_db WHERE STOCK_ID=" + stock_id + ";";
         ResultSet rs = SQL_excuteQuery(query);
         return rs;
     }
