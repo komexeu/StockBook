@@ -3,6 +3,7 @@ package pkg;
 import javax.swing.table.DefaultTableModel;
 import java.math.BigDecimal;
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.util.Stack;
 
 
@@ -11,21 +12,32 @@ public class Calculate {
     public static String add(String s1, String s2) {
         BigDecimal f1 = new BigDecimal(s1);
         BigDecimal f2 = new BigDecimal(s2);
-        return f1.add(f2).toString();
+        DecimalFormat result = new DecimalFormat("0.00");
+        return result.format(f1.add(f2));
     }
 
     //*
     public static String mul(String s1, String s2) {
         BigDecimal f1 = new BigDecimal(s1);
         BigDecimal f2 = new BigDecimal(s2);
-        return f1.multiply(f2).toString();
+        DecimalFormat result = new DecimalFormat("0.00");
+        return result.format(f1.multiply(f2));
     }
 
     public static String mul(String s1, String s2, String s3) {
         BigDecimal f1 = new BigDecimal(s1);
         BigDecimal f2 = new BigDecimal(s2);
         BigDecimal f3 = new BigDecimal(s3);
-        return f1.multiply(f2).multiply(f3).toString();
+        DecimalFormat result = new DecimalFormat("0.00");
+        return result.format(f1.multiply(f2).multiply(f3));
+    }
+
+    // /
+    public static String div(String s1, String s2) {
+        System.out.println(s1 + "/" + s2);
+        BigDecimal f1 = new BigDecimal(s1);
+        BigDecimal f2 = new BigDecimal(s2);
+        return f1.divide(f2, 2).toString();
     }
 
     String percent = "";
@@ -53,7 +65,7 @@ public class Calculate {
                 String tmp_buy = rs.getString(4);
                 String tmp_num = rs.getString(6);
                 String tmp_result = mul(tmp_buy, tmp_num, String.valueOf(1.001425));
-                System.out.print(Sum+",");
+                System.out.print(Sum + ",");
                 Sum = add(Sum, tmp_result);
             }
         } catch (Exception e) {
@@ -71,9 +83,9 @@ public class Calculate {
 
     //買進均價(不含手續費)
     //投資成本(不含手續費)/持有股數
-    float averageOfBuy(String stock_ID) {
-        int sum_num = 0;
-        float sum = 0;
+    String averageOfBuy(String stock_ID) {
+        String sum_num = "1";
+        String sum = "0";
         try {
             String complax_order = "";
             String count = "";
@@ -90,30 +102,29 @@ public class Calculate {
                     count = tmp_rs.getString(1);
             }
             if (count.equals("0"))
-                return 0;
+                return "0";
 
             ResultSet rs = dtb.SQL_query(complax_order);
             ResultSetMetaData rsmd = rs.getMetaData();
             while (rs.next()) {
-                float tmp_num = Float.parseFloat(rs.getString(6));
-                float tmp_buy = Float.parseFloat(rs.getString(4));
+                String tmp_num = rs.getString(6);
+                String tmp_buy = rs.getString(4);
                 //買進股數
-                sum_num += tmp_num;
+                sum_num = add(sum_num, tmp_num);
                 //投資成本(不含手續費)
-                sum += tmp_buy * tmp_num;
+                sum = add(sum, mul(tmp_buy, tmp_num));
             }
-            return sum / sum_num;
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(e);
         }
-        return -99.99f;
+        return div(sum, sum_num);
     }
 
     //損益試算
-    float RealizeProfitLoss(String stock_ID) {
-        float profit_loss = 0;
-        float buy_cost = 0;
+    String RealizeProfitLoss(String stock_ID) {
+        String profit_loss = "0";
+        String buy_cost = "0";
 
         try {
             String complax_order = "";
@@ -123,11 +134,9 @@ public class Calculate {
                 complax_order = "SELECT PROFIT_LOSS,BUY FROM realized_db WHERE stock_ID =" + stock_ID + ";";
             DataBase_Work dtb = new DataBase_Work();
             ResultSet rs = dtb.SQL_query(complax_order);
-            ResultSetMetaData rsmd = rs.getMetaData();
-
             while (rs.next()) {
-                profit_loss += Float.parseFloat(rs.getString(1));
-                buy_cost += Float.parseFloat(rs.getString(2));
+                profit_loss = add(profit_loss, rs.getString(1));
+                buy_cost = add(buy_cost, rs.getString(2));
             }
             percent = percent_caculate(profit_loss, buy_cost);
         } catch (Exception e) {
@@ -138,10 +147,10 @@ public class Calculate {
     }
 
     //趴數計算顯示
-    private String percent_caculate(float profit_loss, float buy_price) {
-        buy_price *= 1000;
-        String tmp_result = String.valueOf((profit_loss / buy_price) * 100);
-        String result = (profit_loss < 0 ? "" : "+ ") + tmp_result + "%";
+    private String percent_caculate(String profit_loss, String buy_price) {
+        buy_price=mul(buy_price,"1000");
+        String tmp_result =mul( div(profit_loss,buy_price),"100") ;
+        String result = (profit_loss.charAt(0)=='-'  ? "" : "+ ") + tmp_result + "%";
         return result;
     }
 
