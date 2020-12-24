@@ -1,11 +1,14 @@
 package pkg;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
+import java.sql.ResultSet;
 
 public class GUI {
     String TABLENAME = "stock_db";
@@ -49,10 +52,11 @@ public class GUI {
     RoundPanel first;
     RoundPanel second;
     RoundPanel third;
+
     //----------------------
-void Init_table(){
-    _table.setRowHeight(20);
-}
+    void Init_table() {
+        _table.setRowHeight(20);
+    }
 
     GUI() {
         Init_table();
@@ -127,6 +131,46 @@ void Init_table(){
     }
 
     void Action() {
+        _ID_text.getDocument().addDocumentListener(new DocumentListener() {
+            public void changedUpdate(DocumentEvent documentEvent) {
+                System.out.println("CHANGE");
+            }
+
+            public void insertUpdate(DocumentEvent documentEvent) {
+                String id = _ID_text.getText();
+                SQL_Connect sql = new SQL_Connect();
+                ResultSet rs = sql.GET_StockName(id);
+                System.out.println(id);
+                try {
+                    if (rs.getRow() != 1) {
+                        _NAME_text.setText("");
+                    }
+                    while (rs.next()) {
+                        _NAME_text.setText(rs.getString(1));
+                    }
+                } catch (Exception e) {
+
+                }
+            }
+
+            public void removeUpdate(DocumentEvent documentEvent) {
+                String id = _ID_text.getText();
+                SQL_Connect sql = new SQL_Connect();
+                ResultSet rs = sql.GET_StockName(id);
+                System.out.println(id);
+                try {
+                    if (rs.getRow() != 1) {
+                        _NAME_text.setText("");
+                    }
+                    while (rs.next()) {
+                        _NAME_text.setText(rs.getString(1));
+                    }
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
         _search_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -187,6 +231,7 @@ void Init_table(){
 
                 //todo (X):賣出時判定股票數量，將剩餘股數與成本重新計算並加入新資料
                 //todo (O):建立所有股票ID/NAME TABLE
+                //todo (O):自動填入股票名稱
                 //todo (X):除權成本為0，資料判定方法變更
                 //todo (O):已實現總損益計算
                 //todo (O):計算用BigDecimal

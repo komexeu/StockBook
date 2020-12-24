@@ -11,6 +11,18 @@ public class SQL_Connect {
     public Statement _stmt;
     ResultSet _rs;
 
+    SQL_Connect() {
+        try {
+            _conn = DriverManager.getConnection(
+                    "jdbc:mysql://127.0.0.1:3306/stockbook_db?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8"
+                    , "root", "password");
+            _stmt = _conn.createStatement();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e);
+        }
+    }
+
     SQL_Connect(String url) {
         try {
             _conn = DriverManager.getConnection(url, "root", "password");
