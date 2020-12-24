@@ -37,10 +37,19 @@ public class Calculate {
         System.out.println(s1 + "/" + s2);
         BigDecimal f1 = new BigDecimal(s1);
         BigDecimal f2 = new BigDecimal(s2);
-        return f1.divide(f2, 2).toString();
+        System.out.println("DIV" + f1.divide(f2, BigDecimal.ROUND_HALF_UP));
+        return f1.divide(f2, BigDecimal.ROUND_HALF_UP).toString();
     }
 
-    String percent = "";
+    public static String div(String s1, String s2, int scale) {
+        System.out.println(s1 + "/" + s2);
+        BigDecimal f1 = new BigDecimal(s1);
+        BigDecimal f2 = new BigDecimal(s2);
+        System.out.println("DIV->" + f1.divide(f2, scale, BigDecimal.ROUND_HALF_UP));
+        return f1.divide(f2, scale, BigDecimal.ROUND_HALF_UP).toString();
+    }
+
+    private String percent = "";
 
     Calculate(DefaultTableModel defaultTableModel) {
 
@@ -148,9 +157,9 @@ public class Calculate {
 
     //趴數計算顯示
     private String percent_caculate(String profit_loss, String buy_price) {
-        buy_price=mul(buy_price,"1000");
-        String tmp_result =mul( div(profit_loss,buy_price),"100") ;
-        String result = (profit_loss.charAt(0)=='-'  ? "" : "+ ") + tmp_result + "%";
+        buy_price = mul(buy_price, "1000");
+        String tmp_result = mul(div(profit_loss, buy_price, 5), "100");
+        String result = (profit_loss.charAt(0) == '-' ? "" : "+ ") + tmp_result + "%";
         return result;
     }
 

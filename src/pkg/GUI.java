@@ -50,8 +50,13 @@ public class GUI {
     RoundPanel second;
     RoundPanel third;
     //----------------------
+void Init_table(){
+    _table.setRowHeight(20);
+}
 
     GUI() {
+        Init_table();
+
         _frame.setSize(1000, 500);
         _frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -184,7 +189,7 @@ public class GUI {
                 //todo (O):建立所有股票ID/NAME TABLE
                 //todo (X):除權成本為0，資料判定方法變更
                 //todo (O):已實現總損益計算
-                //todo (X):計算用BigDecimal
+                //todo (O):計算用BigDecimal
                 //todo (X):放大資料表
                 //todo (X):新增一上欄，顯示獲利%數
                 //todo (X):正規化
@@ -249,7 +254,7 @@ public class GUI {
         String price = "$ " + cal.AddComma(cal.SumOfStock(stock_ID));
         first.text.setText(price);
         second.text.setText(cal.AddComma(cal.averageOfBuy(stock_ID)));
-        third.text.setText("$ " + cal.AddComma(cal.RealizeProfitLoss(stock_ID)) + "/ " + cal.GetPercent());
+        third.text.setText("$ " + cal.AddComma(cal.RealizeProfitLoss(stock_ID)) + " / " + cal.GetPercent());
     }
 }
 
