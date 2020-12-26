@@ -93,7 +93,7 @@ public class Calculate {
     //買進均價(不含手續費)
     //投資成本(不含手續費)/持有股數
     String averageOfBuy(String stock_ID) {
-        String sum_num = "1";
+        String sum_num = "0";
         String sum = "0";
         try {
             String complax_order = "";
@@ -127,7 +127,10 @@ public class Calculate {
             e.printStackTrace();
             System.out.println(e);
         }
-        return div(sum, sum_num);
+        if (sum_num.equals("0"))
+            return "0";
+        else
+            return div(sum, sum_num);
     }
 
     //損益試算

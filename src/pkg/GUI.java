@@ -23,7 +23,7 @@ public class GUI {
     JPanel _search_panel = new JPanel();
     JLabel _search = new JLabel();
     JTextField _search_text = new JTextField("", 4);
-    roundButton _search_button = new roundButton("搜尋");
+    JButton _search_button = new JButton("搜尋");
 
     JComboBox _JBuySell;
     String labels[] = {"買進", "賣出"};
@@ -55,7 +55,7 @@ public class GUI {
 
     //----------------------
     void Init_table() {
-        _table.setRowHeight(20);
+        _table.setRowHeight(25);
     }
 
     GUI() {
@@ -235,7 +235,7 @@ public class GUI {
                 //todo (X):除權成本為0，資料判定方法變更
                 //todo (O):已實現總損益計算
                 //todo (O):計算用BigDecimal
-                //todo (X):放大資料表
+                //todo (O):放大資料表
                 //todo (X):新增一上欄，顯示獲利%數
                 //todo (X):正規化
                 //todo (X):資料庫新增 %數/總成本 欄位
