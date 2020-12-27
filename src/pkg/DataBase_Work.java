@@ -11,7 +11,7 @@ public class DataBase_Work {
     private ResultSet rs;
     SQL_Connect connect;
 
-    DataBase_Work() {
+    public DataBase_Work() {
         connect = new SQL_Connect(
                 "jdbc:mysql://127.0.0.1:3306/stockbook_db?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8"
         );
@@ -20,7 +20,7 @@ public class DataBase_Work {
     }
 
     //SQL結果
-    ResultSet SQL_query(String SQL_order) {
+    public ResultSet SQL_query(String SQL_order) {
         try {
             System.out.println("query->" + SQL_order);
             ResultSet rs = stmt.executeQuery(SQL_order);
@@ -33,7 +33,7 @@ public class DataBase_Work {
         }
     }
 
-    String SQL_Select_Where(String table, String order) {
+    public String SQL_Select_Where(String table, String order) {
         //"SELECT * FROM stock_db"
         String complax_order = "";
         if (order.length() == 0)
@@ -43,7 +43,7 @@ public class DataBase_Work {
         return complax_order;
     }
 
-    String SQL_Select_OrderBy(String stock_id, String sort_rule, boolean up2down) {
+    public String SQL_Select_OrderBy(String stock_id, String sort_rule, boolean up2down) {
         String complax_order = "";
         sort_rule = sort_rule.split(" ")[0];
         if (stock_id.length() == 0)
@@ -59,7 +59,7 @@ public class DataBase_Work {
         return complax_order;
     }
 
-    String SQL_Select_OrderBy(String table, String stock_id, String sort_rule, boolean up2down) {
+    public String SQL_Select_OrderBy(String table, String stock_id, String sort_rule, boolean up2down) {
         String complax_order = "";
         sort_rule = sort_rule.split(" ")[0];
         if (stock_id.length() == 0)
@@ -75,7 +75,7 @@ public class DataBase_Work {
         return complax_order;
     }
 
-    String SQL_Insert(int ID, String stock_ID, String NAME, String Price, String NumOfShares, int mode) {
+    public String SQL_Insert(int ID, String stock_ID, String NAME, String Price, String NumOfShares, int mode) {
         //"INSERT INTO stock_db(stock_ID,NAME,Price,SELL) VALUES();"
         String complax_order = "";
         switch (mode) {
@@ -101,7 +101,7 @@ public class DataBase_Work {
         return complax_order;
     }
 
-    void Search(String stock_id, String sort_rule, boolean up2down) {
+    public void Search(String stock_id, String sort_rule, boolean up2down) {
         try {
             String complax_order = SQL_Select_OrderBy(stock_id, sort_rule, up2down);
             System.out.println("Search->" + complax_order);
@@ -131,7 +131,7 @@ public class DataBase_Work {
         }
     }
 
-    void Search(String Table, String stock_id, String sort_rule, boolean up2down) {
+    public void Search(String Table, String stock_id, String sort_rule, boolean up2down) {
         try {
             String complax_order = SQL_Select_OrderBy(Table, stock_id, sort_rule, up2down);
             System.out.println("Search->" + complax_order);
@@ -161,7 +161,7 @@ public class DataBase_Work {
         }
     }
 //測試v
-    DefaultTableModel Search_USERS_HOLD(String stock_id) {
+public DefaultTableModel Search_USERS_HOLD(String stock_id) {
         //資料庫提取資料，組合新TABLE
         try {
             //標題
@@ -191,7 +191,7 @@ public class DataBase_Work {
     }
 
     //新增資料時將買入資料填入持有紀錄
-    void Buy_Insert(int ID, String stock_ID, String NAME, String Price, String NumOfShares) {
+    public void Buy_Insert(int ID, String stock_ID, String NAME, String Price, String NumOfShares) {
         String sql = "INSERT INTO hold_db(ID,stock_ID,NAME,BUY,NumberOfShares) VALUES("
                 + ID + ",\"" +
                 stock_ID + "\",\"" +
@@ -209,7 +209,7 @@ public class DataBase_Work {
 
     //新增資料時將賣出資料填入賣出紀錄
     //從stockbook_db抓資料寫入realized_db
-    boolean Sell_Insert(int ID, String stock_ID, String NAME, String price, String NumOfShares, String Fieldname) {
+    public boolean Sell_Insert(int ID, String stock_ID, String NAME, String price, String NumOfShares, String Fieldname) {
         try {
             //判斷是否有足夠庫存
             //插入資料
@@ -259,7 +259,7 @@ public class DataBase_Work {
         }
     }
 
-    void Add_Data(String stock_ID, String NAME, String Price, String NumOfShares, String Fieldname, int mode, boolean up2down) {
+    public void Add_Data(String stock_ID, String NAME, String Price, String NumOfShares, String Fieldname, int mode, boolean up2down) {
         try {
             String sql = "SELECT COUNT(*) FROM stock_db";
             ResultSet rs = stmt.executeQuery(sql);
@@ -291,7 +291,7 @@ public class DataBase_Work {
         }
     }
 
-    DefaultTableModel GetTableModel() {
+    public DefaultTableModel GetTableModel() {
         return _tableModel;
     }
 }

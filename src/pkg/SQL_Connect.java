@@ -11,7 +11,7 @@ public class SQL_Connect {
     public Statement _stmt;
     ResultSet _rs;
 
-    SQL_Connect() {
+    public SQL_Connect() {
         try {
             _conn = DriverManager.getConnection(
                     "jdbc:mysql://127.0.0.1:3306/stockbook_db?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8"
@@ -23,7 +23,7 @@ public class SQL_Connect {
         }
     }
 
-    SQL_Connect(String url) {
+    public SQL_Connect(String url) {
         try {
             _conn = DriverManager.getConnection(url, "root", "password");
             _stmt = _conn.createStatement();
@@ -34,38 +34,38 @@ public class SQL_Connect {
     }
 
     //-------------------GET DATA-------------------------
-    ResultSet GET_StockID(String stock_name) {
+    public ResultSet GET_StockID(String stock_name) {
         String query = "SELECT ID FROM stockid_information WHERE NAME=" + stock_name + ";";
         ResultSet rs = SQL_excuteQuery(query);
         return rs;
     }
 
-    ResultSet GET_StockName(String stock_id) {
+    public ResultSet GET_StockName(String stock_id) {
         String query = "SELECT NAME FROM stockid_information WHERE ID=\"" + stock_id + "\";";
         ResultSet rs = SQL_excuteQuery(query);
         return rs;
     }
 
-    ResultSet GET_BUY(String stock_id) {
+    public ResultSet GET_BUY(String stock_id) {
         String query = "SELECT BUY FROM stock_db WHERE STOCK_ID=" + stock_id + ";";
         ResultSet rs = SQL_excuteQuery(query);
         return rs;
     }
 
-    ResultSet GET_SELL(String ID) {
+    public ResultSet GET_SELL(String ID) {
         String query = "SELECT * FROM stock_db WHERE ID=" + ID + ";";
         ResultSet rs = SQL_excuteQuery(query);
         return rs;
     }
 
-    ResultSet GET_PROFIT_LOSS(String ProfitLossID) {
+    public ResultSet GET_PROFIT_LOSS(String ProfitLossID) {
         String query = "SELECT * FROM realized_db WHERE ID=" + ProfitLossID + ";";
         ResultSet rs = SQL_excuteQuery(query);
         return rs;
     }
 
     //----------------
-    ResultSet SQL_excuteQuery(String SQL_order) {
+    public ResultSet SQL_excuteQuery(String SQL_order) {
         try {
             System.out.println("query->" + SQL_order);
             _rs = _stmt.executeQuery(SQL_order);
@@ -76,7 +76,7 @@ public class SQL_Connect {
         return _rs;
     }
 
-    void SQL_excuteUpdate(String SQL_order) {
+    public void SQL_excuteUpdate(String SQL_order) {
         try {
             System.out.println("update->" + SQL_order);
             _stmt.executeUpdate(SQL_order);
@@ -88,26 +88,26 @@ public class SQL_Connect {
 
     //------------------------
     //SELECT * FROM table ;
-    String SQL_Select(String table) {
+    public String SQL_Select(String table) {
         String query = "SELECT * FROM " + table + ";";
         return query;
     }
 
     //SELECT * FROM table WHERE stock_ID = stock_id ;
-    String SQL_Select_sotckID(String table, String stock_id) {
+    public String SQL_Select_sotckID(String table, String stock_id) {
         String query = "SELECT * FROM " + table + " WHERE stock_ID =" + stock_id + ";";
         return query;
     }
 
     //SELECT * FROM table WHERE ID = id ;
-    String SQL_Select_ID(String table, String id) {
+    public String SQL_Select_ID(String table, String id) {
         String query = "SELECT * FROM " + table + " WHERE ID =" + id + ";";
         return query;
     }
 
     //選擇特定欄位資料
     //SELECT FieldName FROM table WHERE WhereCondition ;
-    String SQL_Select_Check_sotckID(Vector<String> FieldName, String table, String WhereCondition) {
+    public String SQL_Select_Check_sotckID(Vector<String> FieldName, String table, String WhereCondition) {
         String query = "";
         String ComplaxField = "";
         for (int i = 0; i < FieldName.size(); ++i) {
