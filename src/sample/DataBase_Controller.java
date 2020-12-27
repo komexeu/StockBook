@@ -1,7 +1,5 @@
 package sample;
 
-import javafx.beans.Observable;
-import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -16,7 +14,6 @@ import java.sql.*;
 public class DataBase_Controller {
     ObservableList dbData = FXCollections.observableArrayList();
     TableView _table;
-    TableColumn col;
 
     DataBase_Controller(TableView table) {
         _table = table;
@@ -37,7 +34,6 @@ public class DataBase_Controller {
             ResultSetMetaData rsmd = rs.getMetaData();
 
             for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
-                //We are using non property style for making dynamic table
                 final int j = i;
                 TableColumn col = new TableColumn(rs.getMetaData().getColumnName(i + 1));
                 col.setCellValueFactory(new Callback<CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {

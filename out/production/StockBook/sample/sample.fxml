@@ -14,36 +14,44 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="555.0" prefWidth="1042.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="555.0" prefWidth="1042.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <left>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #98DDDF;" BorderPane.alignment="CENTER">
          <children>
             <GridPane layoutX="11.0" layoutY="136.0" prefHeight="90.0" prefWidth="183.0">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="145.40001373291017" minWidth="10.0" prefWidth="114.39998016357421" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="86.40000915527344" minWidth="10.0" prefWidth="68.80001983642578" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <ComboBox prefHeight="23.0" prefWidth="200.0" GridPane.columnSpan="2" />
-                  <ComboBox prefHeight="23.0" prefWidth="208.0" GridPane.columnSpan="2" GridPane.rowIndex="2" />
-                  <TextField prefHeight="23.0" prefWidth="87.0" GridPane.rowIndex="4" />
-                  <Button fx:id="SearchButton" mnemonicParsing="false" onAction="#SearchButtonOnAction" text="Search" translateX="20.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                  <ComboBox prefHeight="23.0" prefWidth="200.0" GridPane.columnSpan="2">
                      <GridPane.margin>
-                        <Insets />
+                        <Insets left="10.0" right="10.0" />
+                     </GridPane.margin></ComboBox>
+                  <ComboBox prefHeight="23.0" prefWidth="208.0" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </GridPane.margin></ComboBox>
+                  <TextField prefHeight="23.0" prefWidth="122.0" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets left="10.0" />
+                     </GridPane.margin></TextField>
+                  <Button fx:id="SearchButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#SearchButtonOnAction" prefHeight="23.0" prefWidth="54.0" text="Search" translateX="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets right="10.0" />
                      </GridPane.margin>
                   </Button>
                </children>
             </GridPane>
-            <ImageView fitHeight="113.0" fitWidth="116.0" layoutX="48.0" layoutY="4.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="113.0" fitWidth="116.0" layoutX="48.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../GURA.png" />
                </image>
@@ -62,48 +70,104 @@
          <children>
             <BorderPane>
                <top>
-                  <GridPane prefHeight="79.0" prefWidth="842.0" BorderPane.alignment="CENTER">
+                  <GridPane prefHeight="108.0" prefWidth="842.0" BorderPane.alignment="CENTER">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" percentWidth="50.0" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" percentWidth="50.0" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" percentWidth="50.0" />
                      </columnConstraints>
                      <rowConstraints>
-                        <RowConstraints maxHeight="72.40001220703125" minHeight="10.0" prefHeight="58.80000610351563" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="51.59999389648438" minHeight="10.0" prefHeight="51.59999389648438" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="72.40001220703125" minHeight="0.0" prefHeight="43.999996948242185" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="108.4" minHeight="10.0" prefHeight="64.80000305175781" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <HBox alignment="CENTER" />
-                        <Label alignment="CENTER_RIGHT" prefHeight="63.0" prefWidth="280.0" text="Label" textAlignment="RIGHT" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="26.0" />
-                           </font>
-                        </Label>
-                        <Label alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="107.0" prefWidth="280.0" text="Label" textAlignment="CENTER">
-                           <font>
-                              <Font size="35.0" />
-                           </font>
-                        </Label>
-                        <Label alignment="CENTER" prefHeight="107.0" prefWidth="280.0" text="Label" textAlignment="CENTER" GridPane.columnIndex="1">
-                           <font>
-                              <Font size="35.0" />
-                           </font>
-                        </Label>
-                        <Label alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="63.0" prefWidth="280.0" text="Label" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="26.0" />
-                           </font>
-                        </Label>
-                        <Label alignment="CENTER" prefHeight="107.0" prefWidth="280.0" text="3" textAlignment="RIGHT" GridPane.columnIndex="2">
-                           <font>
-                              <Font size="35.0" />
-                           </font>
-                        </Label>
-                        <Label alignment="CENTER_RIGHT" prefHeight="34.0" prefWidth="280.0" text="Label" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="26.0" />
-                           </font>
-                        </Label>
+                        <VBox alignment="CENTER" style="-fx-background-color: #53B0AE; -fx-background-radius: 10px;" GridPane.rowIndex="1">
+                           <children>
+                              <Label contentDisplay="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="107.0" prefWidth="280.0" text="投資成本:" textAlignment="JUSTIFY">
+                                 <font>
+                                    <Font size="22.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets left="10.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" prefHeight="63.0" prefWidth="280.0" text="233,333" textAlignment="JUSTIFY">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets right="10.0" />
+                                 </VBox.margin>
+                              </Label>
+                           </children>
+                           <GridPane.margin>
+                              <Insets bottom="2.0" left="5.0" right="5.0" top="2.0" />
+                           </GridPane.margin>
+                        </VBox>
+                        <VBox alignment="CENTER" style="-fx-background-color: #53B0AE; -fx-background-radius: 10px;" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <Label contentDisplay="CENTER" prefHeight="107.0" prefWidth="280.0" text="平均買入:" textAlignment="JUSTIFY">
+                                 <font>
+                                    <Font size="22.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets left="10.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="63.0" prefWidth="280.0" text="233,333" textAlignment="JUSTIFY">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets right="10.0" />
+                                 </VBox.margin>
+                              </Label>
+                           </children>
+                           <GridPane.margin>
+                              <Insets bottom="2.0" left="5.0" right="5.0" top="2.0" />
+                           </GridPane.margin>
+                        </VBox>
+                        <VBox alignment="CENTER" style="-fx-background-color: #53B0AE; -fx-background-radius: 10px;" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                           <children>
+                              <Label contentDisplay="CENTER" prefHeight="107.0" prefWidth="280.0" text="損益回報" textAlignment="JUSTIFY">
+                                 <font>
+                                    <Font size="22.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets left="10.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" prefHeight="34.0" prefWidth="280.0" text="233,333" textAlignment="JUSTIFY">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets right="10.0" />
+                                 </VBox.margin>
+                              </Label>
+                           </children>
+                           <GridPane.margin>
+                              <Insets bottom="2.0" left="5.0" right="5.0" top="2.0" />
+                           </GridPane.margin>
+                        </VBox>
+                        <HBox alignment="CENTER" prefHeight="0.0" prefWidth="842.0" spacing="10.0" GridPane.columnSpan="3">
+                           <children>
+                              <ComboBox prefHeight="23.0" prefWidth="92.0" />
+                              <Label text="股票代號:" />
+                              <TextField prefHeight="23.0" prefWidth="83.0">
+                                 <opaqueInsets>
+                                    <Insets />
+                                 </opaqueInsets>
+                              </TextField>
+                              <Label text="股票名稱:" />
+                              <TextField prefHeight="23.0" prefWidth="83.0" />
+                              <Label text="交易價:" />
+                              <TextField prefHeight="23.0" prefWidth="83.0" />
+                              <Label text="交易股數:" />
+                              <TextField prefHeight="23.0" prefWidth="83.0" />
+                              <Button mnemonicParsing="false" text="完成" />
+                           </children>
+                        </HBox>
                      </children>
                   </GridPane>
                </top>
@@ -118,16 +182,4 @@
          </children>
       </GridPane>
    </center>
-   <top>
-      <HBox alignment="CENTER" prefHeight="36.0" prefWidth="1042.0" spacing="10.0" BorderPane.alignment="CENTER">
-         <children>
-            <ComboBox prefHeight="23.0" prefWidth="92.0" />
-            <TextField prefHeight="23.0" prefWidth="83.0" />
-            <TextField prefHeight="23.0" prefWidth="83.0" />
-            <TextField prefHeight="23.0" prefWidth="83.0" />
-            <TextField prefHeight="23.0" prefWidth="83.0" />
-            <Button mnemonicParsing="false" text="Button" />
-         </children>
-      </HBox>
-   </top>
 </BorderPane>
