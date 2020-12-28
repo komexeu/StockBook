@@ -19,16 +19,12 @@ public class DataBase_Controller {
         _table = table;
     }
 
-    public ObservableList GetDbData() {
-        return dbData;
-    }
-
     public void init() throws Exception {
         Connection conn = DriverManager.getConnection(
                 "jdbc:mysql://127.0.0.1:3306/stockbook_db?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8"
                 , "root", "password");
         try {
-            String query = "SELECT * FROM hold_db";
+            String query = "SELECT * FROM stock_db";
             Statement stat = conn.createStatement();
             ResultSet rs = stat.executeQuery(query);
             ResultSetMetaData rsmd = rs.getMetaData();

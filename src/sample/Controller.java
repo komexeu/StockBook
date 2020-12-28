@@ -3,10 +3,14 @@ package sample;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 public class Controller {
     @FXML
-    private Button SearchButton;
+    private Button SearchButton = new Button();
+    @FXML
+    private TextField SearchText = new TextField();
     @FXML
     private TableView _table = new TableView();
 
@@ -17,8 +21,8 @@ public class Controller {
     }
 
     public void SearchButtonOnAction(javafx.event.ActionEvent actionEvent) {
-        System.out.println("Search.");
-        //Stage stage = (Stage) SearchButton.getScene().getWindow();
+        System.out.println("TEXT -> " + SearchText.getText());
+        Stage stage = (Stage) SearchButton.getScene().getWindow();
         //stage.close();
     }
 }
