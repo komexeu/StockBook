@@ -35,7 +35,7 @@ public class SQL_Connect {
 
     //-------------------GET DATA-------------------------
     public ResultSet GET_StockID(String stock_name) {
-        String query = "SELECT ID FROM stockid_information WHERE NAME=" + stock_name + ";";
+        String query = "SELECT ID FROM stockid_information WHERE NAME=\"" + stock_name + "\";";
         ResultSet rs = SQL_excuteQuery(query);
         return rs;
     }
