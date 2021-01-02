@@ -14,7 +14,7 @@ public class SQL_Connect {
     public SQL_Connect() {
         try {
             _conn = DriverManager.getConnection(
-                    "jdbc:mysql://127.0.0.1:3306/stockbook_db?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8"
+                    "jdbc:mysql://127.0.0.1:3306/stockbook_database?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8"
                     , "root", "password");
             _stmt = _conn.createStatement();
         } catch (Exception e) {
@@ -34,6 +34,13 @@ public class SQL_Connect {
     }
 
     //-------------------GET DATA-------------------------
+    public ResultSet Get_Count(String Table) {
+        String query = "SELECT COUNT(*) FROM " + Table;
+        System.out.println("GET_ID ->" + query);
+        ResultSet rs = SQL_excuteQuery(query);
+        return rs;
+    }
+
     public ResultSet GET_StockID(String stock_name) {
         String query = "SELECT ID FROM stockid_information WHERE NAME=\"" + stock_name + "\";";
         ResultSet rs = SQL_excuteQuery(query);
@@ -41,7 +48,7 @@ public class SQL_Connect {
     }
 
     public ResultSet GET_StockName(String stock_id) {
-        String query = "SELECT NAME FROM stockid_information WHERE ID=\"" + stock_id + "\";";
+        String query = "SELECT NAME FROM stockid_information WHERE STOCK_ID=\"" + stock_id + "\";";
         ResultSet rs = SQL_excuteQuery(query);
         return rs;
     }
@@ -62,6 +69,53 @@ public class SQL_Connect {
         String query = "SELECT * FROM realized_db WHERE ID=" + ProfitLossID + ";";
         ResultSet rs = SQL_excuteQuery(query);
         return rs;
+    }
+
+    //--------------SET DATA---------------
+    public void Add_OneData(String STOCKID, String STOCKNAME, String PRICE, String NUM, int in_out_mode) throws Exception {
+        System.out.println("ITEM->" + in_out_mode);
+        ResultSet tmp_rs = Get_Count("id_transaction");
+        String ID = "";
+        while (tmp_rs.next())
+            ID = String.valueOf(Integer.parseInt(tmp_rs.getString(1)) + 1);
+
+        String query = "";
+        switch (in_out_mode) {
+            //buy
+            case 0:
+                //基本資料表
+                query = "INSERT INTO id_transaction(ID,Stock_ID,Stock_NAME,BUY,SELL,NUM) VALUES("
+                        + ID + ",\"" +
+                        STOCKID + "\",\"" +
+                        STOCKNAME + "\"," +
+                        PRICE + "," +
+                        0.00 + ",\"" +
+                        NUM + "\"" + ");";
+                SQL_excuteUpdate(query);
+                break;
+            //sell
+            case 1:
+                //基本資料表
+                query = "INSERT INTO id_transaction(ID,Stock_ID,Stock_NAME,BUY,SELL,NUM) VALUES("
+                        + ID + ",\"" +
+                        STOCKID + "\",\"" +
+                        STOCKNAME + "\"," +
+                        0.00 + "," +
+                        PRICE + ",\"" +
+                        NUM + "\"" + ");";
+                SQL_excuteUpdate(query);
+                break;
+        }
+
+//        //含稅率進階資料表
+//         query = "INSERT INTO cost_tax_table(ID,BUY_TAX,SELL_TAX,TAX,SUM) VALUES("
+//                + ID + ",\"" +
+//                STOCKID + "\",\"" +
+//                STOCKNAME + "\"," +
+//                PRICE + "," +
+//                0.00 + ",\"" +
+//                NUM + "\"" + ");";
+//        SQL_excuteUpdate(query);
     }
 
     //----------------

@@ -43,7 +43,7 @@
                                 <Insets />
                             </GridPane.margin>
                         </TextField>
-                        <Button fx:id="SearchButton" alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Search" translateX="5.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <Button fx:id="button_search" alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Search" translateX="5.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                             <GridPane.margin>
                                 <Insets />
                             </GridPane.margin>
@@ -153,14 +153,14 @@
                                     <children>
                                         <ComboBox fx:id="comboBox_INOUT" prefHeight="23.0" prefWidth="92.0" />
                                         <Label text="股票代號:" />
-                                        <TextField id="stock_id_text" fx:id="stock_id_text" prefHeight="23.0" prefWidth="83.0" />
+                                        <TextField id="stock_id_text" fx:id="text_stockID" prefHeight="23.0" prefWidth="83.0" />
                                         <Label text="股票名稱:" />
-                                        <TextField id="stock_name_text" fx:id="stock_name_text" prefHeight="23.0" prefWidth="150.0" />
+                                        <TextField id="stock_name_text" fx:id="text_stockName" prefHeight="23.0" prefWidth="150.0" />
                                         <Label text="交易價:" />
-                                        <TextField prefHeight="23.0" prefWidth="83.0" />
+                                        <TextField fx:id="text_price" prefHeight="23.0" prefWidth="83.0" />
                                         <Label text="交易股數:" />
-                                        <TextField prefHeight="23.0" prefWidth="83.0" />
-                                        <Button mnemonicParsing="false" text="完成" />
+                                        <TextField fx:id="text_num" prefHeight="23.0" prefWidth="83.0" />
+                                        <Button fx:id="button_intputData" mnemonicParsing="false" onAction="#AddData" text="完成" />
                                     </children>
                                 </HBox>
                             </children>
