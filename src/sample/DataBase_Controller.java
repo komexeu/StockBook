@@ -90,4 +90,61 @@ public class DataBase_Controller {
             e.printStackTrace();
         }
     }
+
+    //交易紀錄
+    public void GetTransaction() throws Exception {
+        try {
+            //init
+            _table.getColumns().clear();
+            dbData.clear();
+
+            String query = "SELECT * FROM id_trassaction;";
+            Statement stat = conn.createStatement();
+            ResultSet rs = stat.executeQuery(query);
+            ResultSetMetaData rsmd = rs.getMetaData();
+
+            //BE SHOWN DATA
+            for (int i = 0; i < rsmd.getColumnCount(); i++) {
+                final int j = i;
+                TableColumn col = new TableColumn(rsmd.getColumnName(i + 1));
+                if (rsmd.getColumnName(i + 1).equals("ID") || rsmd.getColumnName(i + 1).equals("NumberOfShares") ||
+                        rsmd.getColumnName(i + 1).equals("TRANSACTION_NUM")) {
+                    col.setCellValueFactory(new Callback<CellDataFeatures<ObservableList, Integer>, ObservableValue<Integer>>() {
+                        public ObservableValue<Integer> call(CellDataFeatures<ObservableList, Integer> param) {
+                            return new SimpleIntegerProperty(Integer.valueOf(param.getValue().get(j).toString())).asObject();
+                        }
+                    });
+                } else if (rsmd.getColumnName(i + 1).equals("BUY") || rsmd.getColumnName(i + 1).equals("SELL") ||
+                        rsmd.getColumnName(i + 1).equals("TAX") || rsmd.getColumnName(i + 1).equals("PROFIT_LOSS")) {
+                    col.setCellValueFactory(new Callback<CellDataFeatures<ObservableList, Float>, ObservableValue<Float>>() {
+                        public ObservableValue<Float> call(CellDataFeatures<ObservableList, Float> param) {
+                            return new SimpleFloatProperty(Float.valueOf(param.getValue().get(j).toString())).asObject();
+                        }
+                    });
+                } else {
+                    col.setCellValueFactory(new Callback<CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
+                        public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {
+                            return new SimpleStringProperty(param.getValue().get(j).toString());
+                        }
+                    });
+                }
+
+                _table.getColumns().addAll(col);
+                System.out.println("Column [" + i + "] ");
+            }
+
+            System.out.println("rsmd size-> " + rsmd.getColumnCount());
+            while (rs.next()) {
+                ObservableList<String> row = FXCollections.observableArrayList();
+                for (int i = 0; i < rsmd.getColumnCount(); i++) {
+                    row.add(rs.getString(i + 1));
+                }
+                dbData.add(row);
+            }
+
+            _table.setItems(dbData);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
