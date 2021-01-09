@@ -227,7 +227,7 @@ public DefaultTableModel Search_USERS_HOLD(String stock_id) {
                 id.add(Integer.parseInt(rs.getString(1)));
                 if (hold_num - Integer.parseInt(NumOfShares) >= 0) {
                     //新增賣出資料
-                    String str_ID = ("B" + String.valueOf(ID) + "S" + rs.getString(1));
+                    String str_ID = ("S" + String.valueOf(ID) + "B" + rs.getString(1));
                     float buy_price = Float.parseFloat(rs.getString(4));
                     float sell_price = Float.parseFloat(price);
                     float tax_price = buy_price * 0.001425f + sell_price * 0.001425f + sell_price * 0.003f;
@@ -259,7 +259,7 @@ public DefaultTableModel Search_USERS_HOLD(String stock_id) {
         }
     }
 
-    public void Add_Data(String stock_ID, String NAME, String Price, String NumOfShares, String Fieldname, int mode, boolean up2down) {
+    public boolean Add_Data(String stock_ID, String NAME, String Price, String NumOfShares, String Fieldname, int mode, boolean up2down) {
         try {
             String sql = "SELECT COUNT(*) FROM stock_db";
             ResultSet rs = stmt.executeQuery(sql);
@@ -281,14 +281,13 @@ public DefaultTableModel Search_USERS_HOLD(String stock_id) {
                 String complax_order = SQL_Insert(ID, stock_ID, NAME, Price, NumOfShares, mode);
                 System.out.println("ADD_Data->" + complax_order);
                 stmt.executeUpdate(complax_order);
-            } else {
-                System.out.println("=========FAIL============");
+                return true;
             }
-            System.out.println("=====================");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(e);
         }
+        return false;
     }
 
     public DefaultTableModel GetTableModel() {

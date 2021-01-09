@@ -14,7 +14,7 @@ public class SQL_Connect {
     public SQL_Connect() {
         try {
             _conn = DriverManager.getConnection(
-                    "jdbc:mysql://127.0.0.1:3306/stockbook_database?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8"
+                    "jdbc:mysql://127.0.0.1:3306/stockbook_db?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8"
                     , "root", "password");
             _stmt = _conn.createStatement();
         } catch (Exception e) {

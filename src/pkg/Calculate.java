@@ -43,6 +43,8 @@ public class Calculate {
 
     public static String div(String s1, String s2, int scale) {
         System.out.println(s1 + "/" + s2);
+        if (s2.equals("0.00"))
+            return "0.00";
         BigDecimal f1 = new BigDecimal(s1);
         BigDecimal f2 = new BigDecimal(s2);
         System.out.println("DIV->" + f1.divide(f2, scale, BigDecimal.ROUND_HALF_UP));
@@ -135,8 +137,8 @@ public class Calculate {
 
     //損益試算
     String RealizeProfitLoss(String stock_ID) {
-        String profit_loss = "0";
-        String buy_cost = "0";
+        String profit_loss = "0.00";
+        String buy_cost = "0.00";
 
         try {
             String complax_order = "";

@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
+import java.beans.PropertyChangeListener;
 import java.sql.ResultSet;
 
 public class GUI {
@@ -133,10 +134,12 @@ public class GUI {
     void Action() {
         _ID_text.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(DocumentEvent documentEvent) {
+                _top_panel.setBackground(new Color(180, 180, 255));
                 System.out.println("CHANGE");
             }
 
             public void insertUpdate(DocumentEvent documentEvent) {
+                _top_panel.setBackground(new Color(180, 180, 255));
                 String id = _ID_text.getText();
                 SQL_Connect sql = new SQL_Connect();
                 ResultSet rs = sql.GET_StockName(id);
@@ -154,6 +157,7 @@ public class GUI {
             }
 
             public void removeUpdate(DocumentEvent documentEvent) {
+                _top_panel.setBackground(new Color(180, 180, 255));
                 String id = _ID_text.getText();
                 SQL_Connect sql = new SQL_Connect();
                 ResultSet rs = sql.GET_StockName(id);
@@ -168,6 +172,40 @@ public class GUI {
                 } catch (Exception e) {
 
                 }
+            }
+        });
+
+        _Buy_Sell_text.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                _top_panel.setBackground(new Color(180, 180, 255));
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                _top_panel.setBackground(new Color(180, 180, 255));
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                _top_panel.setBackground(new Color(180, 180, 255));
+            }
+        });
+
+        _Num_of_shares_text.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                _top_panel.setBackground(new Color(180, 180, 255));
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                _top_panel.setBackground(new Color(180, 180, 255));
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                _top_panel.setBackground(new Color(180, 180, 255));
             }
         });
 
@@ -198,8 +236,9 @@ public class GUI {
                         return;
 
                 DataBase_Work db_work = new DataBase_Work();
-                db_work.Add_Data(_ID_text.getText(), _NAME_text.getText(), _Buy_Sell_text.getText(),
+                boolean success_addData = db_work.Add_Data(_ID_text.getText(), _NAME_text.getText(), _Buy_Sell_text.getText(),
                         _Num_of_shares_text.getText(), mode, _JBuySell.getSelectedIndex(), UP2DOWN);
+                ChangeColor(success_addData);
                 db_work.Search(TABLENAME, _ID_text.getText(), SORTRULE, UP2DOWN);
                 UpdateTableModel(db_work.GetTableModel());
                 String stock_id = _ID_text.getText();
@@ -300,6 +339,11 @@ public class GUI {
         first.text.setText(price);
         second.text.setText(cal.AddComma(cal.averageOfBuy(stock_ID)));
         third.text.setText("$ " + cal.AddComma(cal.RealizeProfitLoss(stock_ID)) + " / " + cal.GetPercent());
+    }
+
+    void ChangeColor(boolean success) {
+        Color c = success ? new Color(0, 215, 0) : new Color(215, 0, 0);
+        _top_panel.setBackground(c);
     }
 }
 
