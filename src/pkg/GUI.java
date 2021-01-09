@@ -3,12 +3,14 @@ package pkg;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.RoundRectangle2D;
-import java.beans.PropertyChangeListener;
 import java.sql.ResultSet;
 
 public class GUI {
@@ -47,6 +49,7 @@ public class GUI {
 
     JPanel _mid_panel = new JPanel();
     JTable _table = new JTable();
+    JPopupMenu table_popmenu;
     DefaultTableModel _dtm = new DefaultTableModel();
     JScrollPane _scrollPane;
 
@@ -57,11 +60,27 @@ public class GUI {
     //----------------------
     void Init_table() {
         _table.setRowHeight(25);
+        _table.setEnabled(false);
+    }
+
+    void UpdateTableRowColor() {
+        DefaultTableCellRenderer tableRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(
+                    JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                if (row % 2 == 0)
+                    setBackground(new Color(230, 230, 255));
+                else if (row % 2 == 1)
+                    setBackground(Color.white);
+                return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            }
+        };
+        for (int i = 0; i < _table.getColumnCount(); i++) {
+            _table.getColumn(_table.getColumnName(i)).setCellRenderer(tableRenderer);
+        }
     }
 
     GUI() {
-        Init_table();
-
         _frame.setSize(1000, 500);
         _frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -129,6 +148,7 @@ public class GUI {
         _frame.setVisible(true);
 
         Action();
+        Init_table();
     }
 
     void Action() {
@@ -325,11 +345,75 @@ public class GUI {
                 UpdateTopData(stock_id);
             }
         });
+
+        _table.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                TableButtonClick(e);
+            }
+
+            private void TableButtonClick(MouseEvent event) {
+                //右鍵動作
+                if (event.getButton() == MouseEvent.BUTTON3) {
+                    int focusedRowIndex = _table.rowAtPoint((event.getPoint()));
+                    if (focusedRowIndex == -1)
+                        return;
+                    _table.setRowSelectionInterval(focusedRowIndex, focusedRowIndex);
+                    createPopupMenu();
+                    table_popmenu.show(_table, event.getX(), event.getY());
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
+    }
+
+    void createPopupMenu() {
+        table_popmenu = new JPopupMenu();
+
+        JMenuItem delete_tableData = new JMenuItem();
+        delete_tableData.setText("刪除資料");
+        delete_tableData.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Delete Data.");
+            }
+        });
+        table_popmenu.add(delete_tableData);
+
+        JMenuItem update_tableData = new JMenuItem();
+        update_tableData.setText("修改資料");
+        update_tableData.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Update Data.");
+            }
+        });
+        table_popmenu.add(update_tableData);
     }
 
     void UpdateTableModel(DefaultTableModel dtm) {
         _dtm = dtm;
         _table.setModel(_dtm);
+        UpdateTableRowColor();
     }
 
     void UpdateTopData(String stock_ID) {
