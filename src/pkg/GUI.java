@@ -3,6 +3,7 @@ package pkg;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -16,6 +17,7 @@ import java.sql.ResultSet;
 public class GUI {
     String TABLENAME = "stock_db";
     String SORTRULE = "ID";
+    int CanEditedRow = -1;
     Boolean UP2DOWN = false;
 
     JFrame _frame = new JFrame("Stock GUI");
@@ -37,7 +39,7 @@ public class GUI {
             "BUY ^", "BUY v", "SELL ^", "SELL v", "NumberOfShares ^", "NumberOfShares v", "TIME ^", "TIME v"};
 
     JPanel _top_panel = new JPanel();
-    JLabel _ID_label = new JLabel("stock_ID:");
+    JLabel _ID_label = new JLabel("股票代號:");
     JTextField _ID_text = new JTextField("", 4);
     JLabel _NAME_label = new JLabel("名稱:");
     JTextField _NAME_text = new JTextField("", 12);
@@ -48,7 +50,15 @@ public class GUI {
     roundButton _newData_button = new roundButton("新增資料");
 
     JPanel _mid_panel = new JPanel();
-    JTable _table = new JTable();
+    JTable _table = new JTable() {
+        public boolean isCellEditable(int row, int column) {
+            return row == CanEditedRow;
+        }
+
+        public void columnSelectionChanged(ListSelectionEvent event){
+            CanEditedRow=-1;
+        }
+    };
     JPopupMenu table_popmenu;
     DefaultTableModel _dtm = new DefaultTableModel();
     JScrollPane _scrollPane;
@@ -60,7 +70,6 @@ public class GUI {
     //----------------------
     void Init_table() {
         _table.setRowHeight(25);
-        _table.setEnabled(false);
     }
 
     void UpdateTableRowColor() {
@@ -155,7 +164,6 @@ public class GUI {
         _ID_text.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(DocumentEvent documentEvent) {
                 _top_panel.setBackground(new Color(180, 180, 255));
-                System.out.println("CHANGE");
             }
 
             public void insertUpdate(DocumentEvent documentEvent) {
@@ -163,7 +171,6 @@ public class GUI {
                 String id = _ID_text.getText();
                 SQL_Connect sql = new SQL_Connect();
                 ResultSet rs = sql.GET_StockName(id);
-                System.out.println(id);
                 try {
                     if (rs.getRow() != 1) {
                         _NAME_text.setText("");
@@ -181,7 +188,6 @@ public class GUI {
                 String id = _ID_text.getText();
                 SQL_Connect sql = new SQL_Connect();
                 ResultSet rs = sql.GET_StockName(id);
-                System.out.println(id);
                 try {
                     if (rs.getRow() != 1) {
                         _NAME_text.setText("");
@@ -389,15 +395,15 @@ public class GUI {
     void createPopupMenu() {
         table_popmenu = new JPopupMenu();
 
-        JMenuItem delete_tableData = new JMenuItem();
-        delete_tableData.setText("刪除資料");
-        delete_tableData.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("Delete Data.");
-            }
-        });
-        table_popmenu.add(delete_tableData);
+//        JMenuItem delete_tableData = new JMenuItem();
+//        delete_tableData.setText("刪除資料");
+//        delete_tableData.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                System.out.println("Delete Data.");
+//            }
+//        });
+//        table_popmenu.add(delete_tableData);
 
         JMenuItem update_tableData = new JMenuItem();
         update_tableData.setText("修改資料");
@@ -405,6 +411,8 @@ public class GUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Update Data.");
+                CanEditedRow = _table.getSelectedRow();
+                _table.isCellEditable(CanEditedRow, _table.getSelectedColumn());
             }
         });
         table_popmenu.add(update_tableData);
@@ -422,7 +430,7 @@ public class GUI {
         String price = "$ " + cal.AddComma(cal.SumOfStock(stock_ID));
         first.text.setText(price);
         second.text.setText(cal.AddComma(cal.averageOfBuy(stock_ID)));
-        third.text.setText("$ " + cal.AddComma(cal.RealizeProfitLoss(stock_ID)) + " / " + cal.GetPercent());
+        third.text.setText("$ " + cal.AddComma(cal.RealizeProfitLoss_FULL(stock_ID)) + " / " + cal.GetPercent());
     }
 
     void ChangeColor(boolean success) {
@@ -431,9 +439,6 @@ public class GUI {
     }
 }
 
-//p.setBorder(new RoundBorder(new Color(c.getRed(), c.getGreen(), c.getBlue())));
-//p.setBorder(new CompoundBorder(BorderFactory.createMatteBorder(5, 5, 5, 5, Color.WHITE),
-//        BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 class RoundPanel extends JPanel {
     private Color color;
     //使用函式調用會出現TABLE疊加在後面BUG

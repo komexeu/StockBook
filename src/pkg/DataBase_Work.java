@@ -2,6 +2,8 @@ package pkg;
 
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 public class DataBase_Work {
@@ -39,7 +41,7 @@ public class DataBase_Work {
         if (order.length() == 0)
             complax_order = "SELECT * FROM " + table + ";";
         else
-            complax_order = "SELECT * FROM " + table + " WHERE stock_ID =" + order + ";";
+            complax_order = "SELECT * FROM " + table + " WHERE STOCK_ID =" + order + ";";
         return complax_order;
     }
 
@@ -49,7 +51,7 @@ public class DataBase_Work {
         if (stock_id.length() == 0)
             complax_order = "SELECT * FROM stock_db ORDER BY " + sort_rule;
         else
-            complax_order = "SELECT * FROM stock_db WHERE stock_ID =" + stock_id + " ORDER BY " + sort_rule;
+            complax_order = "SELECT * FROM stock_db WHERE STOCK_ID =" + stock_id + " ORDER BY " + sort_rule;
 
         if (up2down)
             complax_order += " DESC;";
@@ -65,7 +67,7 @@ public class DataBase_Work {
         if (stock_id.length() == 0)
             complax_order = "SELECT * FROM " + table + " ORDER BY " + sort_rule;
         else
-            complax_order = "SELECT * FROM " + table + " WHERE stock_ID =" + stock_id + " ORDER BY " + sort_rule;
+            complax_order = "SELECT * FROM " + table + " WHERE STOCK_ID =" + stock_id + " ORDER BY " + sort_rule;
 
         if (up2down)
             complax_order += " DESC;";
@@ -75,23 +77,23 @@ public class DataBase_Work {
         return complax_order;
     }
 
-    public String SQL_Insert(int ID, String stock_ID, String NAME, String Price, String NumOfShares, int mode) {
-        //"INSERT INTO stock_db(stock_ID,NAME,Price,SELL) VALUES();"
+    public String SQL_Insert(int ID, String STOCK_ID, String NAME, String Price, String NumOfShares, int mode) {
+        //"INSERT INTO stock_db(STOCK_ID,NAME,Price,SELL) VALUES();"
         String complax_order = "";
         switch (mode) {
             case 0:
-                complax_order = "INSERT INTO stock_db(ID,stock_ID,NAME,BUY,SELL,NumberOfShares) VALUES("
+                complax_order = "INSERT INTO stock_db(ID,STOCK_ID,NAME,BUY,SELL,NUMBER_OF_SHARES) VALUES("
                         + ID + ",\"" +
-                        stock_ID + "\",\"" +
+                        STOCK_ID + "\",\"" +
                         NAME + "\",\"" +
                         Price + "\",\"" +
                         "0" + "\",";
 
                 break;
             case 1:
-                complax_order = "INSERT INTO stock_db(ID,stock_ID,NAME,BUY,SELL,NumberOfShares) VALUES("
+                complax_order = "INSERT INTO stock_db(ID,STOCK_ID,NAME,BUY,SELL,NUMBER_OF_SHARES) VALUES("
                         + ID + ",\"" +
-                        stock_ID + "\",\"" +
+                        STOCK_ID + "\",\"" +
                         NAME + "\",\"" +
                         "0" + "\",\"" +
                         Price + "\",";
@@ -111,10 +113,20 @@ public class DataBase_Work {
             Vector<String> columnNames = new Vector<>();
             Vector<Vector<String>> data = new Vector<>();
 
-            _tableModel = new DefaultTableModel();
+            HashMap<String, String> map_tableTitle = new HashMap();
+            map_tableTitle.put("ID", "ID");
+            map_tableTitle.put("STOCK_ID", "股票ID");
+            map_tableTitle.put("NAME", "股票名稱");
+            map_tableTitle.put("BUY", "買入");
+            map_tableTitle.put("SELL", "賣出");
+            map_tableTitle.put("NUMBER_OF_SHARES", "交易股數");
+            map_tableTitle.put("TIME", "記入日期");
+
             for (int i = 0; i < rsmd.getColumnCount(); i++) {
-                columnNames.add(rsmd.getColumnName(i + 1));
-                _tableModel.addColumn(rsmd.getColumnName(i + 1));
+                String tmp_name = map_tableTitle.get(rsmd.getColumnName(i + 1));
+                System.out.println("Name->" + tmp_name);
+                columnNames.add(tmp_name);
+                _tableModel.addColumn(tmp_name);
             }
 
             while (rs.next()) {
@@ -142,9 +154,23 @@ public class DataBase_Work {
             Vector<Vector<String>> data = new Vector<>();
 
             _tableModel = new DefaultTableModel();
+            HashMap<String, String> map_tableTitle = new HashMap();
+            map_tableTitle.put("ID", "ID");
+            map_tableTitle.put("STOCK_ID", "股票代號");
+            map_tableTitle.put("NAME", "股票名稱");
+            map_tableTitle.put("BUY", "買入");
+            map_tableTitle.put("SELL", "賣出");
+            map_tableTitle.put("NUMBER_OF_SHARES", "交易股數");
+            map_tableTitle.put("TIME", "記入日期");
+            map_tableTitle.put("TAX", "手續費+交易稅");
+            map_tableTitle.put("PROFIT_LOSS", "損益");
+            map_tableTitle.put("PERCENT_PROFIT_LOSS", "損益(%)");
+
             for (int i = 0; i < rsmd.getColumnCount(); i++) {
-                columnNames.add(rsmd.getColumnName(i + 1));
-                _tableModel.addColumn(rsmd.getColumnName(i + 1));
+                String tmp_name = map_tableTitle.get(rsmd.getColumnName(i + 1));
+                System.out.println("Name->" + tmp_name);
+                columnNames.add(tmp_name);
+                _tableModel.addColumn(tmp_name);
             }
 
             while (rs.next()) {
@@ -160,8 +186,9 @@ public class DataBase_Work {
             System.out.println(e);
         }
     }
-//測試v
-public DefaultTableModel Search_USERS_HOLD(String stock_id) {
+
+    //測試v
+    public DefaultTableModel Search_USERS_HOLD(String stock_id) {
         //資料庫提取資料，組合新TABLE
         try {
             //標題
@@ -191,10 +218,10 @@ public DefaultTableModel Search_USERS_HOLD(String stock_id) {
     }
 
     //新增資料時將買入資料填入持有紀錄
-    public void Buy_Insert(int ID, String stock_ID, String NAME, String Price, String NumOfShares) {
-        String sql = "INSERT INTO hold_db(ID,stock_ID,NAME,BUY,NumberOfShares) VALUES("
+    public void Buy_Insert(int ID, String STOCK_ID, String NAME, String Price, String NumOfShares) {
+        String sql = "INSERT INTO hold_db(ID,STOCK_ID,NAME,BUY,NUMBER_OF_SHARES) VALUES("
                 + ID + ",\"" +
-                stock_ID + "\",\"" +
+                STOCK_ID + "\",\"" +
                 NAME + "\",\"" +
                 Price + "\",";
         sql += (NumOfShares + ");");
@@ -209,14 +236,15 @@ public DefaultTableModel Search_USERS_HOLD(String stock_id) {
 
     //新增資料時將賣出資料填入賣出紀錄
     //從stockbook_db抓資料寫入realized_db
-    public boolean Sell_Insert(int ID, String stock_ID, String NAME, String price, String NumOfShares, String Fieldname) {
+    //約略值，僅供參考
+    public boolean Sell_Insert(int ID, String STOCK_ID, String NAME, String price, String NumOfShares, String Fieldname) {
         try {
             //判斷是否有足夠庫存
             //插入資料
             int hold_num = 0;
             Vector<Integer> id = new Vector<>();
 
-            String sql = SQL_Select_OrderBy("hold_db", stock_ID, "NumberOfShares", true);
+            String sql = SQL_Select_OrderBy("hold_db", STOCK_ID, "NUMBER_OF_SHARES", true);
             System.out.println("SELL->" + sql);
             stmt.executeQuery(sql);
             ResultSet rs = stmt.getResultSet();
@@ -231,16 +259,19 @@ public DefaultTableModel Search_USERS_HOLD(String stock_id) {
                     float buy_price = Float.parseFloat(rs.getString(4));
                     float sell_price = Float.parseFloat(price);
                     float tax_price = buy_price * 0.001425f + sell_price * 0.001425f + sell_price * 0.003f;
+                    float profit_loss = (sell_price - buy_price - tax_price) * 1000;
+                    float percent_profit_loss = (profit_loss / (buy_price * 1000 + tax_price)) * 100;
 
-                    sql = "INSERT INTO realized_db(ID,stock_ID,NAME,BUY,SELL,TAX,TRANSACTION_NUM,PROFIT_LOSS) VALUES(\"" +
+                    sql = "INSERT INTO realized_db(ID,STOCK_ID,NAME,BUY,SELL,TAX,NUMBER_OF_SHARES,PROFIT_LOSS,PERCENT_PROFIT_LOSS) VALUES(\"" +
                             str_ID + "\",\"" +
-                            stock_ID + "\",\"" +
+                            STOCK_ID + "\",\"" +
                             NAME + "\"," +
                             buy_price + "," +
                             price + "," +
                             tax_price * 1000 + "," +
                             NumOfShares + ",\"" +
-                            String.valueOf((sell_price - buy_price - tax_price) * 1000) + "\");";
+                            String.valueOf(profit_loss) + "\",\"" +
+                            String.valueOf(percent_profit_loss) + "%" + "\");";
                     stmt.executeUpdate(sql);
                     //刪除擁有資料
                     for (int i = 0; i < id.size(); ++i) {
@@ -259,7 +290,7 @@ public DefaultTableModel Search_USERS_HOLD(String stock_id) {
         }
     }
 
-    public boolean Add_Data(String stock_ID, String NAME, String Price, String NumOfShares, String Fieldname, int mode, boolean up2down) {
+    public boolean Add_Data(String STOCK_ID, String NAME, String Price, String NumOfShares, String Fieldname, int mode, boolean up2down) {
         try {
             String sql = "SELECT COUNT(*) FROM stock_db";
             ResultSet rs = stmt.executeQuery(sql);
@@ -271,14 +302,14 @@ public DefaultTableModel Search_USERS_HOLD(String stock_id) {
 
             boolean sell_success = true;
             if (mode == 0)
-                Buy_Insert(ID, stock_ID, NAME, Price, NumOfShares);
+                Buy_Insert(ID, STOCK_ID, NAME, Price, NumOfShares);
             else {
-                sell_success = Sell_Insert(ID, stock_ID, NAME, Price, NumOfShares, Fieldname);
+                sell_success = Sell_Insert(ID, STOCK_ID, NAME, Price, NumOfShares, Fieldname);
             }
 
             Fieldname = Fieldname.split(" ")[0];
             if (sell_success) {
-                String complax_order = SQL_Insert(ID, stock_ID, NAME, Price, NumOfShares, mode);
+                String complax_order = SQL_Insert(ID, STOCK_ID, NAME, Price, NumOfShares, mode);
                 System.out.println("ADD_Data->" + complax_order);
                 stmt.executeUpdate(complax_order);
                 return true;

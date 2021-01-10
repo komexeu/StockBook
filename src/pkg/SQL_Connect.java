@@ -84,7 +84,7 @@ public class SQL_Connect {
             //buy
             case 0:
                 //基本資料表
-                query = "INSERT INTO id_transaction(ID,Stock_ID,Stock_NAME,BUY,SELL,NUM) VALUES("
+                query = "INSERT INTO id_transaction(ID,STOCK_ID,Stock_NAME,BUY,SELL,NUM) VALUES("
                         + ID + ",\"" +
                         STOCKID + "\",\"" +
                         STOCKNAME + "\"," +
@@ -147,9 +147,9 @@ public class SQL_Connect {
         return query;
     }
 
-    //SELECT * FROM table WHERE stock_ID = stock_id ;
+    //SELECT * FROM table WHERE STOCK_ID = stock_id ;
     public String SQL_Select_sotckID(String table, String stock_id) {
-        String query = "SELECT * FROM " + table + " WHERE stock_ID =" + stock_id + ";";
+        String query = "SELECT * FROM " + table + " WHERE STOCK_ID =" + stock_id + ";";
         return query;
     }
 

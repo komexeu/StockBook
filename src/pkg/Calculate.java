@@ -34,20 +34,16 @@ public class Calculate {
 
     // /
     public static String div(String s1, String s2) {
-        System.out.println(s1 + "/" + s2);
         BigDecimal f1 = new BigDecimal(s1);
         BigDecimal f2 = new BigDecimal(s2);
-        System.out.println("DIV" + f1.divide(f2, BigDecimal.ROUND_HALF_UP));
         return f1.divide(f2, BigDecimal.ROUND_HALF_UP).toString();
     }
 
     public static String div(String s1, String s2, int scale) {
-        System.out.println(s1 + "/" + s2);
         if (s2.equals("0.00"))
             return "0.00";
         BigDecimal f1 = new BigDecimal(s1);
         BigDecimal f2 = new BigDecimal(s2);
-        System.out.println("DIV->" + f1.divide(f2, scale, BigDecimal.ROUND_HALF_UP));
         return f1.divide(f2, scale, BigDecimal.ROUND_HALF_UP).toString();
     }
 
@@ -76,7 +72,6 @@ public class Calculate {
                 String tmp_buy = rs.getString(4);
                 String tmp_num = rs.getString(6);
                 String tmp_result = mul(tmp_buy, tmp_num, String.valueOf(1.001425));
-                System.out.print(Sum + ",");
                 Sum = add(Sum, tmp_result);
             }
         } catch (Exception e) {
@@ -136,7 +131,7 @@ public class Calculate {
     }
 
     //損益試算
-    String RealizeProfitLoss(String stock_ID) {
+    String RealizeProfitLoss_FULL(String stock_ID) {
         String profit_loss = "0.00";
         String buy_cost = "0.00";
 
@@ -174,7 +169,6 @@ public class Calculate {
 
     //-----------------------------------------
     String AddComma(String s) {
-        System.out.println(s);
         String CommaString = "";
         String split_sum[] = s.split("\\.");
         int flag = split_sum[0].length() % 3;
