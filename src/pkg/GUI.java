@@ -1,9 +1,7 @@
 package pkg;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -55,8 +53,8 @@ public class GUI {
             return row == CanEditedRow;
         }
 
-        public void columnSelectionChanged(ListSelectionEvent event){
-            CanEditedRow=-1;
+        public void columnSelectionChanged(ListSelectionEvent event) {
+            CanEditedRow = -1;
         }
     };
     JPopupMenu table_popmenu;
@@ -71,6 +69,7 @@ public class GUI {
     void Init_table() {
         _table.setRowHeight(25);
     }
+
 
     void UpdateTableRowColor() {
         DefaultTableCellRenderer tableRenderer = new DefaultTableCellRenderer() {
@@ -420,6 +419,19 @@ public class GUI {
 
     void UpdateTableModel(DefaultTableModel dtm) {
         _dtm = dtm;
+        _dtm.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                int type = e.getType();
+                int row = e.getFirstRow();
+                int column = e.getColumn();
+                System.out.println("TABLE CHANGE");
+
+                if (type == TableModelEvent.INSERT)
+                    System.out.println("TABLE INSERT");
+                System.out.println(_dtm.getValueAt(row, column));
+            }
+        });
         _table.setModel(_dtm);
         UpdateTableRowColor();
     }
