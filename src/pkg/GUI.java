@@ -426,9 +426,6 @@ public class GUI {
                 int row = e.getFirstRow();
                 int column = e.getColumn();
                 System.out.println("TABLE CHANGE");
-
-                if (type == TableModelEvent.INSERT)
-                    System.out.println("TABLE INSERT");
                 System.out.println(_dtm.getValueAt(row, column));
             }
         });
