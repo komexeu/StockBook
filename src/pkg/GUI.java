@@ -1,5 +1,7 @@
 package pkg;
 
+import sample.MapData;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -11,6 +13,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.RoundRectangle2D;
 import java.sql.ResultSet;
+import java.util.Map;
+import java.util.Objects;
 
 public class GUI {
     String TABLENAME = "stock_db";
@@ -237,15 +241,7 @@ public class GUI {
         _search_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String stock_id = _search_text.getText();
-                for (int i = 0; i < stock_id.length(); ++i)
-                    if (!Character.isDigit(stock_id.charAt(i)))
-                        return;
-
-                DataBase_Work db_work = new DataBase_Work();
-                db_work.Search(TABLENAME, stock_id, SORTRULE, UP2DOWN);
-                UpdateTableModel(db_work.GetTableModel());
-                UpdateTopData(stock_id);
+                UpdateTopData();
             }
         });
 
@@ -311,15 +307,7 @@ public class GUI {
                     UP2DOWN = false;
                 SORTRULE = mode;
 
-                String stock_id = _search_text.getText();
-                for (int i = 0; i < stock_id.length(); ++i)
-                    if (!Character.isDigit(stock_id.charAt(i)))
-                        return;
-
-                DataBase_Work db_work = new DataBase_Work();
-                db_work.Search(TABLENAME, stock_id, SORTRULE, UP2DOWN);
-                UpdateTableModel(db_work.GetTableModel());
-                UpdateTopData(stock_id);
+                UpdateTopData();
             }
         });
 
@@ -338,16 +326,7 @@ public class GUI {
                         TABLENAME = "realized_db";
                         break;
                 }
-
-                String stock_id = _search_text.getText();
-                for (int i = 0; i < stock_id.length(); ++i)
-                    if (!Character.isDigit(stock_id.charAt(i)))
-                        return;
-
-                DataBase_Work db_work = new DataBase_Work();
-                db_work.Search(TABLENAME, stock_id, SORTRULE, UP2DOWN);
-                UpdateTableModel(db_work.GetTableModel());
-                UpdateTopData(stock_id);
+                UpdateTopData();
             }
         });
 
@@ -425,15 +404,43 @@ public class GUI {
                 int type = e.getType();
                 int row = e.getFirstRow();
                 int column = e.getColumn();
-                System.out.println("TABLE CHANGE");
-                System.out.println(_dtm.getValueAt(row, column));
+
+                DataBase_Work dataBase_work = new DataBase_Work();
+                String ColumnName = "";
+                //get key by value
+                for (Map.Entry<String, String> entry : MapData.map_tableTitle.entrySet()) {
+                    if (Objects.equals(_dtm.getColumnName(column), entry.getValue())) {
+                        ColumnName = entry.getKey();
+                    }
+                }
+                boolean result = dataBase_work.editData(TABLENAME, _dtm.getValueAt(row, 0).toString(),
+                        ColumnName, _dtm.getValueAt(row, column).toString());
+                UpdateTopData();
             }
         });
         _table.setModel(_dtm);
         UpdateTableRowColor();
     }
 
+    void UpdateTopData() {
+        String stock_id = _search_text.getText();
+        for (int i = 0; i < stock_id.length(); ++i)
+            if (!Character.isDigit(stock_id.charAt(i)))
+                return;
+
+        DataBase_Work db_work = new DataBase_Work();
+        db_work.Search(TABLENAME, stock_id, SORTRULE, UP2DOWN);
+        UpdateTableModel(db_work.GetTableModel());
+
+        Calculate cal = new Calculate(db_work.GetTableModel());
+        String price = "$ " + cal.AddComma(cal.SumOfStock(stock_id));
+        first.text.setText(price);
+        second.text.setText(cal.AddComma(cal.averageOfBuy(stock_id)));
+        third.text.setText("$ " + cal.AddComma(cal.RealizeProfitLoss_FULL(stock_id)) + " / " + cal.GetPercent());
+    }
+
     void UpdateTopData(String stock_ID) {
+
         DataBase_Work db_work = new DataBase_Work();
         Calculate cal = new Calculate(db_work.GetTableModel());
         String price = "$ " + cal.AddComma(cal.SumOfStock(stock_ID));

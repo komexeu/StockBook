@@ -70,54 +70,6 @@ public class SQL_Connect {
         ResultSet rs = SQL_excuteQuery(query);
         return rs;
     }
-
-    //--------------SET DATA---------------
-    public void Add_OneData(String STOCKID, String STOCKNAME, String PRICE, String NUM, int in_out_mode) throws Exception {
-        System.out.println("ITEM->" + in_out_mode);
-        ResultSet tmp_rs = Get_Count("id_transaction");
-        String ID = "";
-        while (tmp_rs.next())
-            ID = String.valueOf(Integer.parseInt(tmp_rs.getString(1)) + 1);
-
-        String query = "";
-        switch (in_out_mode) {
-            //buy
-            case 0:
-                //基本資料表
-                query = "INSERT INTO id_transaction(ID,STOCK_ID,Stock_NAME,BUY,SELL,NUM) VALUES("
-                        + ID + ",\"" +
-                        STOCKID + "\",\"" +
-                        STOCKNAME + "\"," +
-                        PRICE + "," +
-                        0.00 + ",\"" +
-                        NUM + "\"" + ");";
-                SQL_excuteUpdate(query);
-                break;
-            //sell
-            case 1:
-                //基本資料表
-                query = "INSERT INTO id_transaction(ID,Stock_ID,Stock_NAME,BUY,SELL,NUM) VALUES("
-                        + ID + ",\"" +
-                        STOCKID + "\",\"" +
-                        STOCKNAME + "\"," +
-                        0.00 + "," +
-                        PRICE + ",\"" +
-                        NUM + "\"" + ");";
-                SQL_excuteUpdate(query);
-                break;
-        }
-
-//        //含稅率進階資料表
-//         query = "INSERT INTO cost_tax_table(ID,BUY_TAX,SELL_TAX,TAX,SUM) VALUES("
-//                + ID + ",\"" +
-//                STOCKID + "\",\"" +
-//                STOCKNAME + "\"," +
-//                PRICE + "," +
-//                0.00 + ",\"" +
-//                NUM + "\"" + ");";
-//        SQL_excuteUpdate(query);
-    }
-
     //----------------
     public ResultSet SQL_excuteQuery(String SQL_order) {
         try {

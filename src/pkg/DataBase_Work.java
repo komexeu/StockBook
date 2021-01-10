@@ -1,9 +1,9 @@
 package pkg;
 
+import sample.MapData;
+
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Vector;
 
 public class DataBase_Work {
@@ -113,17 +113,8 @@ public class DataBase_Work {
             Vector<String> columnNames = new Vector<>();
             Vector<Vector<String>> data = new Vector<>();
 
-            HashMap<String, String> map_tableTitle = new HashMap();
-            map_tableTitle.put("ID", "ID");
-            map_tableTitle.put("STOCK_ID", "股票ID");
-            map_tableTitle.put("NAME", "股票名稱");
-            map_tableTitle.put("BUY", "買入");
-            map_tableTitle.put("SELL", "賣出");
-            map_tableTitle.put("NUMBER_OF_SHARES", "交易股數");
-            map_tableTitle.put("TIME", "記入日期");
-
             for (int i = 0; i < rsmd.getColumnCount(); i++) {
-                String tmp_name = map_tableTitle.get(rsmd.getColumnName(i + 1));
+                String tmp_name = MapData.map_tableTitle.get(rsmd.getColumnName(i + 1));
                 System.out.println("Name->" + tmp_name);
                 columnNames.add(tmp_name);
                 _tableModel.addColumn(tmp_name);
@@ -154,21 +145,8 @@ public class DataBase_Work {
             Vector<Vector<String>> data = new Vector<>();
 
             _tableModel = new DefaultTableModel();
-            HashMap<String, String> map_tableTitle = new HashMap();
-            map_tableTitle.put("ID", "ID");
-            map_tableTitle.put("STOCK_ID", "股票代號");
-            map_tableTitle.put("NAME", "股票名稱");
-            map_tableTitle.put("BUY", "買入");
-            map_tableTitle.put("SELL", "賣出");
-            map_tableTitle.put("NUMBER_OF_SHARES", "交易股數");
-            map_tableTitle.put("TIME", "記入日期");
-            map_tableTitle.put("TAX", "手續費+交易稅");
-            map_tableTitle.put("PROFIT_LOSS", "損益");
-            map_tableTitle.put("PERCENT_PROFIT_LOSS", "損益(%)");
-
             for (int i = 0; i < rsmd.getColumnCount(); i++) {
-                String tmp_name = map_tableTitle.get(rsmd.getColumnName(i + 1));
-                System.out.println("Name->" + tmp_name);
+                String tmp_name = MapData.map_tableTitle.get(rsmd.getColumnName(i + 1));
                 columnNames.add(tmp_name);
                 _tableModel.addColumn(tmp_name);
             }
@@ -314,6 +292,19 @@ public class DataBase_Work {
                 stmt.executeUpdate(complax_order);
                 return true;
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e);
+        }
+        return false;
+    }
+
+    public boolean editData(String Table, String ID, String ColumnName, String Changed_result) {
+        try {
+            String sql = "UPDATE " + Table + " SET " + ColumnName + " = " + Changed_result + " WHERE " + Table + ".ID=" + ID + ";";
+            System.out.println(sql);
+            stmt.executeUpdate(sql);
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(e);
