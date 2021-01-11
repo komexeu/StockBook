@@ -261,7 +261,7 @@ public class GUI {
                         _Num_of_shares_text.getText(), mode, _JBuySell.getSelectedIndex(), UP2DOWN);
                 ChangeColor(success_addData);
                 db_work.Search(TABLENAME, _ID_text.getText(), SORTRULE, UP2DOWN);
-                UpdateTableModel(db_work.GetTableModel());
+                EditTable(db_work.GetTableModel());
                 String stock_id = _ID_text.getText();
                 UpdateTopData(stock_id);
             }
@@ -396,7 +396,7 @@ public class GUI {
         table_popmenu.add(update_tableData);
     }
 
-    void UpdateTableModel(DefaultTableModel dtm) {
+    void EditTable(DefaultTableModel dtm) {
         _dtm = dtm;
         _dtm.addTableModelListener(new TableModelListener() {
             @Override
@@ -413,9 +413,14 @@ public class GUI {
                         ColumnName = entry.getKey();
                     }
                 }
-                boolean result = dataBase_work.editData(TABLENAME, _dtm.getValueAt(row, 0).toString(),
-                        ColumnName, _dtm.getValueAt(row, column).toString());
-                UpdateTopData();
+                //只能對交易紀錄做更動
+                if (TABLENAME != "stock_db")
+                    return;
+                if (ColumnName == "BUY" || ColumnName == "SELL" || ColumnName == "NUMBER_OF_SHARES") {
+                    boolean result = dataBase_work.editData(TABLENAME, _dtm.getValueAt(row, 0).toString(),
+                            ColumnName, _dtm.getValueAt(row, column).toString());
+                    UpdateTopData();
+                }
             }
         });
         _table.setModel(_dtm);
@@ -430,7 +435,7 @@ public class GUI {
 
         DataBase_Work db_work = new DataBase_Work();
         db_work.Search(TABLENAME, stock_id, SORTRULE, UP2DOWN);
-        UpdateTableModel(db_work.GetTableModel());
+        EditTable(db_work.GetTableModel());
 
         Calculate cal = new Calculate(db_work.GetTableModel());
         String price = "$ " + cal.AddComma(cal.SumOfStock(stock_id));
@@ -440,7 +445,6 @@ public class GUI {
     }
 
     void UpdateTopData(String stock_ID) {
-
         DataBase_Work db_work = new DataBase_Work();
         Calculate cal = new Calculate(db_work.GetTableModel());
         String price = "$ " + cal.AddComma(cal.SumOfStock(stock_ID));

@@ -215,6 +215,34 @@ public class DataBase_Work {
     //新增資料時將賣出資料填入賣出紀錄
     //從stockbook_db抓資料寫入realized_db
     //約略值，僅供參考
+    public boolean Sell_Check(int ID, String STOCK_ID, String NAME, String price, String NumOfShares, String Fieldname) {
+        try {
+            //判斷是否有足夠庫存
+            //插入資料
+            int hold_num = 0;
+            Vector<Integer> id = new Vector<>();
+
+            String sql = SQL_Select_OrderBy("hold_db", STOCK_ID, "NUMBER_OF_SHARES", true);
+            System.out.println("SELL->" + sql);
+            stmt.executeQuery(sql);
+            ResultSet rs = stmt.getResultSet();
+            //從已有資料中找到可扣除資料
+            hold_num = 0;
+            while (rs.next()) {
+                hold_num += Integer.parseInt(rs.getString(5));
+                if (hold_num - Integer.parseInt(NumOfShares) >= 0) {
+                    return true;
+                }
+            }
+            System.out.println("庫存不足");
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e);
+            return false;
+        }
+    }
+
     public boolean Sell_Insert(int ID, String STOCK_ID, String NAME, String price, String NumOfShares, String Fieldname) {
         try {
             //判斷是否有足夠庫存
@@ -233,29 +261,47 @@ public class DataBase_Work {
                 id.add(Integer.parseInt(rs.getString(1)));
                 if (hold_num - Integer.parseInt(NumOfShares) >= 0) {
                     //新增賣出資料
-                    String str_ID = ("S" + String.valueOf(ID) + "B" + rs.getString(1));
+                    String remark = rs.getString(1);
                     float buy_price = Float.parseFloat(rs.getString(4));
                     float sell_price = Float.parseFloat(price);
-                    float tax_price = buy_price * 0.001425f + sell_price * 0.001425f + sell_price * 0.003f;
-                    float profit_loss = (sell_price - buy_price - tax_price) * 1000;
-                    float percent_profit_loss = (profit_loss / (buy_price * 1000 + tax_price)) * 100;
+                    int num_of_shares = Integer.parseInt(NumOfShares);
+                    float tax_price = (buy_price * 0.001425f + sell_price * 0.001425f + sell_price * 0.003f);
+                    float profit_loss = (sell_price - buy_price - tax_price) * num_of_shares;
+                    float percent_profit_loss = (profit_loss / (buy_price * num_of_shares + tax_price)) * 100;
 
-                    sql = "INSERT INTO realized_db(ID,STOCK_ID,NAME,BUY,SELL,TAX,NUMBER_OF_SHARES,PROFIT_LOSS,PERCENT_PROFIT_LOSS) VALUES(\"" +
-                            str_ID + "\",\"" +
+                    sql = "INSERT INTO realized_db(ID,REMARKS,STOCK_ID,NAME,BUY,SELL," +
+                            "TAX,NUMBER_OF_SHARES,PROFIT_LOSS,PERCENT_PROFIT_LOSS) VALUES(" +
+                            ID + ",\"" +
+                            remark + "\",\"" +
                             STOCK_ID + "\",\"" +
                             NAME + "\"," +
                             buy_price + "," +
                             price + "," +
-                            tax_price * 1000 + "," +
+                            tax_price*1000 + "," +
                             NumOfShares + ",\"" +
                             String.valueOf(profit_loss) + "\",\"" +
                             String.valueOf(percent_profit_loss) + "%" + "\");";
+                    System.out.println(sql);
                     stmt.executeUpdate(sql);
                     //刪除擁有資料
                     for (int i = 0; i < id.size(); ++i) {
                         sql = "DELETE FROM hold_db WHERE ID =" + id.elementAt(i) + ";";
                         stmt.executeUpdate(sql);
                     }
+
+                    //對stock_db做"買"資料備註
+                    sql = "UPDATE stock_db SET REMARKS=" + ID + " WHERE ID=" + remark + ";";
+                    System.out.println(sql);
+                    stmt.executeUpdate(sql);
+
+                    //對stock_db做"賣"資料備註
+                    sql = "UPDATE stock_db SET REMARKS=" + remark + " WHERE ID=" + ID + ";";
+                    System.out.println(sql);
+                    stmt.executeUpdate(sql);
+                    sql = "UPDATE realized_db SET REMARKS=" + remark + " WHERE ID=" + ID + ";";
+                    System.out.println(sql);
+                    stmt.executeUpdate(sql);
+
                     return true;
                 }
             }
@@ -278,18 +324,21 @@ public class DataBase_Work {
                 ID = Integer.parseInt(rs.getString(1));
             ID += 1;
 
-            boolean sell_success = true;
-            if (mode == 0)
-                Buy_Insert(ID, STOCK_ID, NAME, Price, NumOfShares);
-            else {
-                sell_success = Sell_Insert(ID, STOCK_ID, NAME, Price, NumOfShares, Fieldname);
-            }
-
-            Fieldname = Fieldname.split(" ")[0];
-            if (sell_success) {
+            boolean sell_success = false;
+            if (mode == 0) {
                 String complax_order = SQL_Insert(ID, STOCK_ID, NAME, Price, NumOfShares, mode);
                 System.out.println("ADD_Data->" + complax_order);
                 stmt.executeUpdate(complax_order);
+                Buy_Insert(ID, STOCK_ID, NAME, Price, NumOfShares);
+                return true;
+            } else {
+                if (!Sell_Check(ID, STOCK_ID, NAME, Price, NumOfShares, Fieldname))
+                    return false;
+                String complax_order = SQL_Insert(ID, STOCK_ID, NAME, Price, NumOfShares, mode);
+                System.out.println("ADD_Data->" + complax_order);
+                stmt.executeUpdate(complax_order);
+                Sell_Insert(ID, STOCK_ID, NAME, Price, NumOfShares, Fieldname);
+                //Fieldname = Fieldname.split(" ")[0];
                 return true;
             }
         } catch (Exception e) {
@@ -301,9 +350,57 @@ public class DataBase_Work {
 
     public boolean editData(String Table, String ID, String ColumnName, String Changed_result) {
         try {
-            String sql = "UPDATE " + Table + " SET " + ColumnName + " = " + Changed_result + " WHERE " + Table + ".ID=" + ID + ";";
+            //交易紀錄的更新
+            String sql = "UPDATE stock_db SET " + ColumnName + " = " + Changed_result + " WHERE " + Table + ".ID=" + ID + ";";
             System.out.println(sql);
             stmt.executeUpdate(sql);
+
+            //持有股票的更新
+            // UPDATE hold_db
+            //SET hold_db.NUMBER_OF_SHARES = (SELECT NUMBER_OF_SHARES FROM stock_db WHERE ID="*ID")
+            //WHERE ID ="*ID";
+            if (!ColumnName.equals("REMARKS")) {
+                sql = "UPDATE hold_db SET hold_db." + ColumnName +
+                        " = (SELECT " + ColumnName + " FROM stock_db WHERE ID=" + ID + ")" +
+                        "Where ID=" + ID + ";";
+                System.out.println(sql);
+                stmt.executeUpdate(sql);
+            }
+
+            //獲利結算的更新
+            //UPDATE realized_db
+            //SET realized_db.NUMBER_OF_SHARES = (SELECT NUMBER_OF_SHARES FROM stock_db WHERE ID="*ID");
+            sql = "UPDATE realized_db SET realized_db." + ColumnName +
+                    " = (SELECT " + ColumnName + " FROM stock_db WHERE ID=" + ID + ")" +
+                    "Where ID=" + ID + ";";
+            System.out.println(sql);
+            stmt.executeUpdate(sql);
+
+            //重新計算損益
+            sql = "SELECT BUY,SELL,NUMBER_OF_SHARES FROM realized_db WHERE ID =" + ID + ";";
+            System.out.println(sql);
+            ResultSet rs = stmt.executeQuery(sql);
+            float tax_price = 0;
+            float profit_loss = 0;
+            float percent_profit_loss = 0;
+
+            rs.next();
+
+            float buy_price = Float.parseFloat(rs.getString(1));
+            float sell_price = Float.parseFloat(rs.getString(2));
+            int num_of_shares = Integer.parseInt(rs.getString(3));
+            tax_price = (buy_price * 0.001425f + sell_price * 0.001425f + sell_price * 0.003f);
+            profit_loss = (sell_price - buy_price - tax_price) * num_of_shares;
+            percent_profit_loss = (profit_loss / (buy_price * num_of_shares + tax_price)) * 100;
+            //損益更新
+            sql = "UPDATE realized_db SET TAX =" + tax_price * 1000+
+                    ",PROFIT_LOSS =" + profit_loss +
+                    ",PERCENT_PROFIT_LOSS =" + percent_profit_loss +
+                    " Where ID=" + ID + ";";
+            System.out.println(sql);
+            stmt.executeUpdate(sql);
+
+
             return true;
         } catch (Exception e) {
             e.printStackTrace();

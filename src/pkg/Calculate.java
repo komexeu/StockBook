@@ -169,6 +169,9 @@ public class Calculate {
 
     //-----------------------------------------
     String AddComma(String s) {
+        if(s.equals("0"))
+            return "0";
+
         String CommaString = "";
         String split_sum[] = s.split("\\.");
         int flag = split_sum[0].length() % 3;
