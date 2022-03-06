@@ -16,6 +16,6 @@ public class MapData {
         map_tableTitle.put("PROFIT_LOSS", "損益");
         map_tableTitle.put("PERCENT_PROFIT_LOSS", "損益(%)");
         map_tableTitle.put("TIME", "記入日期");
-        map_tableTitle.put("REMARKS", "買賣ID");
+        map_tableTitle.put("REMARKS", "買/賣ID");
     }
 }
